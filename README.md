@@ -6,6 +6,8 @@ In this repo you can find the source code for the presentation and exercises for
 
 - [Introduction](https://dpa-pde-oxford.quarto.pub/introduction-ohdsi-us-2024/)
 - [CDMConnector](https://dpa-pde-oxford.quarto.pub/cdmconnector-ohdsi-us-2024/)
+- [Cohorts](https://dpa-pde-oxford.quarto.pub/cohorts)
+- [Characterisation](https://dpa-pde-oxford.quarto.pub/cohortcharacteristics-ohdsi-us-2024/)
 
 ## Post cloud
 

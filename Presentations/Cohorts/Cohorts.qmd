@@ -17,11 +17,284 @@ format:
 execute:
   echo: true
   eval: true
+  warning: false
 editor: visual
 ---
 
 ## Cohort
 
+```{r, echo=FALSE}
+options(width = 110)
+```
+
+
 **A cohort is a group of individuals that satisfy a set of inclusion criteria during an amount of time.**
 
+In omop we define a cohort with four columns:
 
+- `cohort_definition_id`
+- `subject_id`
+- `cohort_start_date`
+- `cohort_end_date`
+
+. . .
+
+We have added some attrobutes to this object to keep track of cohort names, attritions and counts. We will see those attributes with examples.
+
+## How to create a cohort
+
+There are some functions in "our" packages to create cohorts, now we will see two:
+
+- `CDMConnector::generateConceptCohortSet()` to generate cohorts from a concept set.
+- `DrugUtilisation::generateDrugUtilisationCohortSet()` to create drug cohorts from a concept set.
+
+## Let's get started
+
+```{r}
+library(duckdb)
+library(CDMConnector)
+
+con <- dbConnect(duckdb(), eunomiaDir())
+cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main")
+```
+
+## Let's create a codelist
+
+```{r}
+library(dplyr)
+cdm$concept |>
+  filter(grepl("sinusitis", concept_name))
+```
+
+. . .
+
+```{r}
+cdm$concept |>
+  filter(grepl("bronchitis", concept_name))
+```
+
+. . .
+
+```{r}
+concept <- list(
+  sinusitis = c(4294548, 40481087, 257012),
+  bronchitis = c(258780, 260139)
+)
+```
+
+## Tip: CodelistGenerator
+
+We could have used `CodelistGenerator` package to do the search in a systematic way
+
+```{r}
+library(CodelistGenerator)
+getCandidateCodes(cdm, "bronchitis")
+```
+
+
+## A concept cohort
+
+. . .
+
+```{r}
+cdm <- generateConceptCohortSet(
+  cdm = cdm,
+  conceptSet = concept,
+  name = "my_cohort",
+  limit = "all",
+  end = 0
+)
+```
+
+<br>
+
+. . .
+
+```{r, message=TRUE}
+cdm
+```
+
+## A concept cohort
+
+. . .
+
+```{r}
+cdm$my_cohort
+```
+
+## A concept cohort
+
+. . .
+
+```{r}
+cdm$my_cohort |>
+  filter(cohort_definition_id == 1, subject_id == 236)
+```
+
+. . .
+
+```{r}
+cdm$condition_occurrence |>
+  filter(condition_concept_id %in% !!concept$sinusitis, person_id == 236)
+```
+
+## A concept cohort
+
+Let's take a look to the different metadata stored with the cohort:
+
+. . .
+
+**settings**
+
+```{r}
+cdm$my_cohort |>
+  settings()
+```
+
+## A concept cohort
+
+**counts**
+
+```{r}
+cdm$my_cohort |>
+  cohortCount()
+```
+
+## A concept cohort
+
+**attrition**
+
+```{r}
+cdm$my_cohort |>
+  attrition()
+```
+
+## A concept cohort
+
+**associated codelist**
+
+```{r}
+cohortCodelist(cdm$my_cohort, cohortId = 1, type = "index event")
+```
+
+. . .
+
+```{r}
+cohortCodelist(cdm$my_cohort, cohortId = 1, type = "index event")$sinusitis
+```
+
+## A drug cohort
+
+We have a dedicated function for *DrugUtilisation* cohorts, the main difference between: `generateConceptCohortSet` and `generateDrugUtilisationCohortSet` is the **gap** argument.
+
+. . .
+
+This argument allows us to collapse consecutive drug prescriptions that are separated by `xx` days or less.
+
+. . .
+
+To create drug codelist we can use `CodelistGenerator::getDrugIngredientCodes()`:
+
+. . .
+
+```{r}
+getDrugIngredientCodes(cdm = cdm, name = "acetaminophen")
+```
+. . .
+
+```{r}
+getDrugIngredientCodes(cdm = cdm, name = "acetaminophen")$`161_acetaminophen`
+```
+
+## A drug users cohort
+
+```{r, message=TRUE}
+library(DrugUtilisation)
+concept <- getDrugIngredientCodes(cdm = cdm, name = "acetaminophen")
+cdm <- generateDrugUtilisationCohortSet(
+  cdm = cdm, name = "drug_users", conceptSet = concept)
+cdm
+```
+
+## A drug users cohort
+
+```{r}
+settings(cdm$drug_users)
+```
+
+## A drug users cohort
+
+```{r}
+attrition(cdm$drug_users)
+```
+
+## A drug users cohort
+
+```{r}
+cohortCount(cdm$drug_users)
+```
+
+## A drug users cohort
+
+```{r}
+cohortCodelist(cdm$drug_users, cohortId = 1)
+```
+
+## A drug users cohort
+
+Let's use a gap era of 30 days now (if the subjects stops for 30 days or less they are considered to be still in the cohort):
+
+```{r}
+cdm <- generateDrugUtilisationCohortSet(
+  cdm = cdm, name = "drug_users_30", conceptSet = concept, gapEra = 30)
+attrition(cdm$drug_users_30)
+```
+
+## Inclusion criteria
+
+When defining drug cohorts we may want to apply some inclusion criteria, in the `DrugUtilisation` package we have some functions to apply them:
+
+- Require that entries are in a certain date range `requireDrugInDateRange()`.
+
+- Subset to the first entry `requireIsFirstDrugEntry()`.
+
+- Require a certain time in observation before the entries `requireObservationBeforeDrug()`.
+
+- Require a certain time before exposure `requirePriorDrugWashout()`.
+
+## Inclusion criteria
+
+How do they work, we have just to pipe it to the cohort of interest and the function will take care to filter and update attrition.
+
+```{r}
+cdm$drug_users_30 <- cdm$drug_users_30 |>
+  requirePriorDrugWashout(days = 730) |>
+  requireObservationBeforeDrug(days = 365)
+```
+
+## Inclusion criteria
+
+```{r}
+cohortCount(cdm$drug_users_30)
+```
+
+## Inclusion criteria
+
+```{r}
+attrition(cdm$drug_users_30)
+```
+
+## Inclusion criteria
+
+```{r, echo=FALSE}
+library(DiagrammeR)
+cdm$drug_users_30 |>
+  CohortCharacteristics::summariseCohortAttrition() |>
+  CohortCharacteristics::plotCohortAttrition()
+```
+
+## Inclusion criteria
+
+Note that inclusion criteria may not be interchangeable in some situations: `A + B != B + A`.
+
+You can read more about drug cohorts and their inclusion criteria [here](https://darwin-eu-dev.github.io/DrugUtilisation/articles/create_cohorts.html).

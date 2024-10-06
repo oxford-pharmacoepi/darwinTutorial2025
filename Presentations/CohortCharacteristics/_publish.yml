@@ -1,0 +1,8 @@
+- source: CohortCharacteristicsPart1.qmd
+  quarto-pub:
+    - id: 13f6a9fe-80d4-4d31-8428-e701a9f9eefb
+      url: 'https://quartopub.com/sites/dpa-pde-oxford/cohortcharacteristics-part1'
+- source: CohortCharacteristics.qmd
+  quarto-pub:
+    - id: b7542d4f-3da9-4d1d-a9a5-d18f91a45223
+      url: 'https://dpa-pde-oxford.quarto.pub/cohortcharacteristics-ohdsi-us-2024'
