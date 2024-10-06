@@ -251,7 +251,7 @@ tbl(db, "drug_exposure") |>
 
 ## [CDMConnector](https://cran.r-project.org/package=CDMConnector)
 
-![](cdmconnector_hex.png){fig-align="center"}
+![](https://github.com/oxford-pharmacoepi/darwinTutorial2024/blob/main/Presentations/logo/CDMConnector.png){fig-align="center"}
 
 ## Creating a reference to the OMOP common data model
 

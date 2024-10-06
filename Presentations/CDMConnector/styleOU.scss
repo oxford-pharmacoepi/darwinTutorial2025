@@ -21,6 +21,8 @@ $code-block-border-color: #000000;
 
 $font-family-sans-serif: 'Roboto Slab', serif;
 
+$size-hex: 70px;
+
 /*-- scss:rules --*/
 
 .title-slide {
@@ -81,11 +83,11 @@ $font-family-sans-serif: 'Roboto Slab', serif;
 }
 
 .reveal {
-  background-image: url('https://github.com/oxford-pharmacoepi/darwinTutorial2024/blob/main/Presentations/CDMConnector/logoHDS.png?raw=true'), url('https://github.com/oxford-pharmacoepi/darwinTutorial2024/blob/main/Presentations/CDMConnector/hexsticker.png?raw=true');
+  background-image: url('https://github.com/oxford-pharmacoepi/darwinTutorial2024/blob/main/Presentations/logos/logoHDS.png?raw=true'), url('https://github.com/oxford-pharmacoepi/darwinTutorial2024/blob/main/Presentations/logos/CDMConnector.png?raw=true');
   background-repeat: no-repeat, no-repeat;
-  background-size: 90px, 90px;
-  background-position-x: calc(100% - 120px), calc(100% - 30px);
-  background-position-y: 30px, 30px;
+  background-size: $size-hex, $size-hex;
+  background-position-x: calc(100% - 1.3*$size-hex), calc(100% - 0.3*$size-hex);
+  background-position-y: 0.3*$size-hex, 0.3*$size-hex;
 }
 
 .reveal p, li {

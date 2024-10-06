@@ -1,0 +1,27 @@
+---
+title: "Cohorts"
+subtitle: "Creating concept and drug cohorts"
+format:
+  revealjs: 
+    theme: [simple, styleOU.scss]
+    incremental: true   
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    margin: 0.07
+    code-link: true
+    code-line-numbers: false
+    height: 900
+    width: 1600
+    footer: "Conducting 'Off-The-Shelf' Characterization Studies Using DARWIN EU Tools and the OMOP CDM"
+execute:
+  echo: true
+  eval: true
+editor: visual
+---
+
+## Cohort
+
+**A cohort is a group of individuals that satisfy a set of inclusion criteria during an amount of time.**
+
+
