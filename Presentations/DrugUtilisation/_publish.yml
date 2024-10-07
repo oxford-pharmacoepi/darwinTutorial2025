@@ -1,0 +1,4 @@
+- source: DrugUtilisation.qmd
+  quarto-pub:
+    - id: 69a4de09-f73c-46a6-9b20-706ef572aae0
+      url: 'https://dpa-pde-oxford.quarto.pub/drugutilisation-ohdsi-us-2024'
