@@ -9,7 +9,7 @@ In this repo you can find the source code for the presentation and exercises for
 - [Cohorts](https://dpa-pde-oxford.quarto.pub/cohorts)
 - [Characterisation](https://dpa-pde-oxford.quarto.pub/cohortcharacteristics-ohdsi-us-2024/)
 
-## Post cloud
+## Posit cloud
 
 A posit cloud account is available which all the packages installed and **GiBleed** synthetic database downloaded so you can follow the presentation:
 
