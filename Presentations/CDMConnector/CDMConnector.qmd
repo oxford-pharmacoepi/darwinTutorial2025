@@ -24,7 +24,7 @@ editor: visual
 
 -   Every time that someone goes to the doctor and something happens the doctors write it into their records.
 
--   Each annotation of the doctor is translated into a code, combination of letters and numbers that refers to a condition. There exist several different codding languages: SNOMED, read codes, ICD10, ICD9, RxNorm, ATC, ... It depends on the region, language, type of record and others which one is used. This makes that the same condition or drug can be coded in different ways.
+-   Each annotation of the doctor is translated into a code, combination of letters and numbers that refers to a condition. There exist several different coding languages: SNOMED, read codes, ICD10, ICD9, RxNorm, ATC, ... It depends on the region, language, type of record and others which one is used. This makes that the same condition or drug can be coded in different ways.
 
 -   A compilation of these records for a group of people is what we call the medical databases. Depending on the origin and purpose of these data there are different groups of databases: electronic health records, claims data, registries... This databases can be structured by several different tables.
 
