@@ -39,7 +39,7 @@ In omop we define a cohort with four columns:
 
 . . .
 
-We have added some attrobutes to this object to keep track of cohort names, attritions and counts. We will see those attributes with examples.
+We have added some attributes to this object to keep track of cohort names, attritions and counts. We will see those attributes with examples.
 
 ## How to create a cohort
 
