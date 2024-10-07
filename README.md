@@ -13,4 +13,4 @@ In this repo you can find the source code for the presentation and exercises for
 
 A posit cloud account is available which all the packages installed and **GiBleed** synthetic database downloaded so you can follow the presentation:
 
-- [Posit cloud]()
+- [Posit cloud](https://posit.cloud/spaces/562431/join?access_code=v5L4fNH-hmUjbkYzS-1sTTopISrbYfO2mUn4IOSo)
