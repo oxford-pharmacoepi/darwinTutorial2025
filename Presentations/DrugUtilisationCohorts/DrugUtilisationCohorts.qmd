@@ -37,15 +37,15 @@ This package aims to standardise and provide the tools to conduct Drug Utilisati
 
 ## Content
 
-- Create a base cohort of drug users
+-   Create a base cohort of drug users
 
-- Apply inclusion criteria to the drug users cohort:
+-   Apply inclusion criteria to the drug users cohort:
 
-  - Washout
-  - First observation
-  - Prior observation
-  - Date range
-  
+    -   Washout
+    -   First observation
+    -   Prior observation
+    -   Date range
+
 ## The package
 
 <br>
@@ -56,11 +56,11 @@ install.packages("DrugUtilisation")
 
 <br>
 
-- [v0.7.1](https://cran.r-project.org/package=DrugUtilisation) on cran.
+-   [v0.7.1](https://cran.r-project.org/package=DrugUtilisation) on cran.
 
-- [package website](https://darwin-eu-dev.github.io/DrugUtilisation/)
+-   [package website](https://darwin-eu-dev.github.io/DrugUtilisation/)
 
-- [Report an issue/Feature request](https://github.com/darwin-eu-dev/DrugUtilisation/issues/new)
+-   [Report an issue/Feature request](https://github.com/darwin-eu-dev/DrugUtilisation/issues/new)
 
 ## Create a reference to a cdm object
 
@@ -190,10 +190,10 @@ names(attributes(cdm$dus_cohort))
 
 . . .
 
-- Settings
-- Counts
-- Attrition
-- Codelist
+-   Settings
+-   Counts
+-   Attrition
+-   Codelist
 
 ## Cohort attributes
 
@@ -233,7 +233,7 @@ cohortCodelist(cdm$dus_cohort, cohortId = 1)
 
 . . .
 
-```
+```         
 Number of days between two continuous exposures to be considered in the same era. Records that have fewer days between them than this gap will be concatenated into the same cohort record.
 ```
 
@@ -241,9 +241,9 @@ Number of days between two continuous exposures to be considered in the same era
 
 By default: `gapEra = 1` which means that:
 
-- Overlapping records will be joined (this will happen always).
+-   Overlapping records will be joined (this will happen always).
 
-- Consecutive records will be joined
+-   Consecutive records will be joined
 
 ## gapEra parameter
 
@@ -305,10 +305,10 @@ cdm <- generateDrugUtilisationCohortSet(
 
 Four functions to add inclusion criteria to our cohort:
 
-  - Washout `requirePriorDrugWashout()`
-  - First observation `requireIsFirstDrugEntry()`
-  - Prior observation `requireObservationBeforeDrug()`
-  - Date range `requireDrugInDateRange()`
+-   Washout `requirePriorDrugWashout()`
+-   First observation `requireIsFirstDrugEntry()`
+-   Prior observation `requireObservationBeforeDrug()`
+-   Date range `requireDrugInDateRange()`
 
 ## Inclusion criteria
 
@@ -392,29 +392,28 @@ Not all inclusion criteria are commutable operations (A + B != B + A):
 
 Not commutable:
 
-- `prior washout` + `prior observation` != `prior observation` + `prior washout`
-- `prior washout` + `first` != `first` + `prior washout`
-- `prior washout` + `date range` != `date range` + `prior washout`
-- `first` + `prior observation` != `prior observation` + `first`
-- `first` + `date range` != `date range` + `first`
+-   `prior washout` + `prior observation` != `prior observation` + `prior washout`
+-   `prior washout` + `first` != `first` + `prior washout`
+-   `prior washout` + `date range` != `date range` + `prior washout`
+-   `first` + `prior observation` != `prior observation` + `first`
+-   `first` + `date range` != `date range` + `first`
 
 . . .
 
 Commutable:
 
-- `date range` + `prior observation` == `prior observation` + `date range`
+-   `date range` + `prior observation` == `prior observation` + `date range`
 
 ## Recommended order
 
 Having all this into account the recommended order to apply criteria would be:
 
-1. Require a prior drug washout or require first drug entry (particular case).
+1.  Require a prior drug washout or require first drug entry (particular case).
 
-2. Require a prior observation before the drug episode.
+2.  Require a prior observation before the drug episode.
 
-3. Require the drugs to be in a certain date range.
+3.  Require the drugs to be in a certain date range.
 
 ## Vignette to create cohorts
 
 <https://darwin-eu-dev.github.io/DrugUtilisation/articles/create_cohorts.html>
-
