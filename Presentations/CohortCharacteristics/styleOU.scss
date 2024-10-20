@@ -179,3 +179,9 @@ figcaption {
     word-wrap: break-word !important;
     white-space: pre-wrap !important;
 }
+
+.scrollable-content {
+  max-height: 650px; /* Adjust the height as needed */
+  overflow-y: auto;  /* Adds vertical scroll */
+  padding: 10px;     /* Optional: Adds some padding */
+}
