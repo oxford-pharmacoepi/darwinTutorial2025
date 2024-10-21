@@ -100,27 +100,28 @@ flowchart LR
 
 ## Create the cdm reference
 
-::: {.scrollable-content}
-This is a lot of text inside the scrollable area. You can add as much content as you want here, and it will be scrollable within the specified height.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel ligula scelerisque, fermentum dolor sed, pharetra velit. Nunc molestie urna ut velit convallis, vel congue metus hendrerit. Fusce vitae mi at odio vehicula vulputate. Sed tempor mi sit amet turpis aliquet, nec viverra nisl sollicitudin.
-More content...
-
-Vestibulum ullamcorper orci ut malesuada sagittis. Donec nec eros in odio scelerisque condimentum. Nulla facilisi. Donec dapibus dignissim nunc, ut ullamcorper est auctor ut.
-:::
-
-## Create the cdm reference
-
 ```{r}
-library(CDMConnector)
+dbPath <- here::here("darwinTutorialTest.duckdb")
+options(timeout = 600)
+download.file(
+  url = "https://github.com/oxford-pharmacoepi/darwinTutorial2024/raw/refs/heads/main/database/darwinTutorialTest.duckdb",
+  destfile = dbPath,
+  mode = "wb",
+  method = "auto",
+  quiet = FALSE,
+  extra = list(progressfunction = function(downloaded, total) {
+    progress <- min(1, downloaded/total)
+    cli::cli_progress_update(id = pb, set = progress)
+  })
+)
+
 library(duckdb)
+library(CDMConnector)
+library(dplyr)
+library(here)
 
-db <- dbConnect(duckdb(),  eunomiaDir())
-cdm <- cdmFromCon(con = db, cdmSchema = "main", writeSchema = "main")
-```
-
-```{r, message=TRUE}
-cdm
+db <- dbConnect(duckdb(), dbdir = dbPath)
+cdm <- cdmFromCon(con = db, cdmSchema = "public", writeSchema = "results")
 ```
 
 ## summariseCohortAttrition
@@ -140,14 +141,14 @@ cdm <- generateDrugUtilisationCohortSet(
 cdm$dus_cohort <- cdm$dus_cohort |>
   requirePriorDrugWashout(days = 180) |>
   requireObservationBeforeDrug(days = 180) |>
-  requireDrugInDateRange(dateRange = as.Date(c("1980-01-01", "2019-12-31")))
+  requireDrugInDateRange(dateRange = as.Date(c("2000-01-01", "2022-12-31")))
 ```
 
 ## summariseCohortAttrition
 
 . . .
 
-`summariseCohortAttrition` extracts the data from `attrition(cdm$dus_dus_cohort)` in a standard format:
+`summariseCohortAttrition` extracts the data from `attrition(cdm$dus_cohort)` in a standard format:
 
 . . .
 
@@ -155,13 +156,14 @@ cdm$dus_cohort <- cdm$dus_cohort |>
 library(CohortCharacteristics)
 result <- summariseCohortAttrition(cdm$dus_cohort)
 result |>
-  dplyr::glimpse()
+  glimpse()
 ```
 
 . . .
 
 ```{r}
-settings(result)
+settings(result) |>
+  glimpse()
 ```
 
 ## brief mention of summaried_result
@@ -182,7 +184,7 @@ settings(result)
 
 . . .
 
-::: {.scrollable-content}
+::: scrollable-content
 ```{r}
 tableCohortAttrition(result)
 ```
@@ -213,7 +215,7 @@ plotCohortAttrition(result)
 
 . . .
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, results='asis'}
 plotCohortAttrition(result)
 ```
 
@@ -225,6 +227,36 @@ The output is a [DiagrammeR](https://rich-iannone.github.io/DiagrammeR/) object:
 plt <- plotCohortAttrition(result)
 svg <- DiagrammeRsvg::export_svg(plt)
 DiagrammeRsvg::rsvg_png(DiagrammeRsvg::charToRaw(svg), file = "attrition.png")
+```
+
+## Your turn
+
+Can you visualise the attrition of the simvastatin cohort that we created before?
+
+. . .
+
+Can you suppress counts under 10?
+
+## Result
+
+```{r, echo=FALSE, results='asis'}
+codelist <- getDrugIngredientCodes(cdm = cdm, name = "simvastatin")
+cdm <- generateDrugUtilisationCohortSet(
+  cdm = cdm,
+  name = "simvastatin_cohort",
+  conceptSet = codelist,
+  gapEra = 90
+)
+cdm$simvastatin_cohort <- cdm$simvastatin_cohort |>
+  requireIsFirstDrugEntry() |>
+  requireObservationBeforeDrug(days = 365) |>
+  requireDrugInDateRange(dateRange = as.Date(c('2010-01-01', '2021-12-31')))
+
+result <- cdm$simvastatin_cohort |>
+  summariseCohortAttrition() |>
+  suppress(minCellCount = 10)
+
+plotCohortAttrition(result)
 ```
 
 ## SummariseCharacteristics
@@ -242,9 +274,12 @@ You need to instantiate the medications and/or conditions of interest in a cohor
 ## Let's instantiate some cohorts
 
 ```{r}
-library(DrugUtilisation)
 library(CodelistGenerator)
-codelist <- getDrugIngredientCodes(cdm = cdm, name = c("warfarin", "acetaminophen", "morphine"), nameStyle = "{concept_name}")
+codelist <- getDrugIngredientCodes(
+  cdm = cdm, 
+  name = c("warfarin", "morphine", "verapamil", "atorvastatin", "nitroglycerin"), 
+  nameStyle = "{concept_name}"
+)
 cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
   name = "medications",
@@ -253,12 +288,11 @@ cdm <- generateDrugUtilisationCohortSet(
 cdm <- generateConceptCohortSet(
   cdm = cdm, 
   conceptSet =list(
-    "antineoplastic_and_immunomodulating_agents" = c(1118088, 1118084, 40224132, 19010482, 40224805, 19007333, 1500211, 1305058, 1503184, 19134077, 1549786),
-    "musculoskeletal_system" = c(1118088, 1557272, 40162359, 1124300, 1115008, 40173590, 1118084, 42707627, 19019273, 19019979, 19078461, 19003953, 1112807, 1115171, 1177480),
-    "antiinfectives_for_systemic_use" = c(19129655, 1728416, 920293, 19074841, 920300, 920334, 19074843, 19075001, 19073183, 19073188, 1713671, 1729720, 19006318, 1778162, 46275444, 1717327, 1738521, 1741122, 1759842, 1713332, 1746114, 1768849, 46233710, 19133873, 46233988, 19133905),
-    "nervous_system" = c(708298, 701322, 723013, 1129625, 1110410, 753626, 1124957, 1102527, 1125315, 782043, 791967, 1119510, 19078219, 757627, 40220386, 740275, 40223774, 1154029, 1127078, 1127433, 40222846, 19057271, 40223768, 45892894, 705944, 715997, 19078924, 19076374, 19077572, 40229134, 19059056, 19016749, 40236446, 19074679, 742185, 40231925, 1112807, 35605858, 40162522, 782047, 19039298, 19059528, 836654, 836659, 19115351, 19023398, 19002770, 19123231, 19133768, 40165015),
-    "dermatologicals" = c(1129625, 1149380, 1124300, 836654, 1595799, 975125, 19008572),
-    "respiratory_system" = c(1129625, 1149196, 1149380, 1150770, 1150836, 1153428, 1107830, 1110410, 738818, 1124957, 40169216, 1125443, 1119510, 1137529, 1154615, 1154343, 40223821, 19019979, 19112599, 40223834, 43012036, 40229134, 19029476, 19078461, 40232448, 1177480, 1192710, 1343916, 1150771, 1150837, 1107882, 975125, 1174888, 40169281, 40228214, 40228230, 19125062)
+    "fever" = c(437663),
+    "cough" = c(254761),
+    "cardiac_arrest" = c(321042),
+    "myocardial_infarction" = c(4329847),
+    "headache" = c(378253)
   ),
   name = "conditions",
   end = 0,
@@ -284,7 +318,7 @@ result <- cdm$dus_cohort |>
     )
   )
 result |>
-  dplyr::glimpse()
+  glimpse()
 ```
 
 ## tableCharacteristics
@@ -293,7 +327,7 @@ result |>
 tableCharacteristics(result)
 ```
 
-::: {.scrollable-content}
+::: scrollable-content
 ```{r, echo=FALSE}
 tableCharacteristics(result)
 ```
@@ -310,7 +344,7 @@ tableCharacteristics(
 )
 ```
 
-::: {.scrollable-content}
+::: scrollable-content
 ```{r, echo=FALSE}
 tableCharacteristics(
   result,
@@ -333,7 +367,7 @@ result |>
   )
 ```
 
-::: {.scrollable-content}
+::: scrollable-content
 ```{r, echo=FALSE}
 result |>
   dplyr::filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
@@ -344,3 +378,79 @@ result |>
   )
 ```
 :::
+
+## Your turn
+
+Characterise the 'simvastatin' cohort with:
+
+-   Demographics
+-   Two age groups: 0-49; \>=50
+-   Number of records in condition_occurrence on the index date.
+-   Using same drugs than for acetaminophen which ones where used in the prior year *including index date*
+-   Using same conditions than for acetaminophen which ones where used any time prior *including index date*
+
+. . .
+
+**Suppress counts under 10**
+
+. . .
+
+**Visualise it in a nice table**
+
+. . .
+
+**Can you stratify the result by age group?** (`PatientProfiles::addAge()` allows you to add age_group column to any table).
+
+## Result
+
+```{r, echo=FALSE}
+result <- cdm$simvastatin_cohort |>
+  PatientProfiles::addAge(ageGroup = list(c(0, 49), c(50, Inf))) |>
+  summariseCharacteristics(
+    strata = list("age_group"),
+    demographics = TRUE,
+    ageGroup = list(c(0, 49), c(50, Inf)),
+    tableIntersectCount = list(
+      "Number conditions on index" = list(tableName = "condition_occurrence", window = c(0, 0))
+    ),
+    cohortIntersectFlag = list(
+      "Conditions any time prior" = list(targetCohortTable = "conditions", window = c(-Inf, 0)),
+      "Medications prior year" = list(targetCohortTable = "medications", window = c(-365, 0))
+    )
+  )
+result |>
+  suppress(minCellCount = 10) |>
+  dplyr::filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
+  tableCharacteristics(
+    header = "age_group", 
+    groupColumn = "cohort_name",
+    hide = c("table", "window", "value", "cdm_name")
+  )
+```
+
+## Solution
+
+```{r, eval=FALSE}
+result <- cdm$simvastatin_cohort |>
+  PatientProfiles::addAge(ageGroup = list(c(0, 49), c(50, Inf))) |>
+  summariseCharacteristics(
+    strata = list("age_group"),
+    demographics = TRUE,
+    ageGroup = list(c(0, 49), c(50, Inf)),
+    tableIntersectCount = list(
+      "Number conditions on index" = list(tableName = "condition_occurrence", window = c(0, 0))
+    ),
+    cohortIntersectFlag = list(
+      "Conditions any time prior" = list(targetCohortTable = "conditions", window = c(-Inf, 0)),
+      "Medications prior year" = list(targetCohortTable = "medications", window = c(-365, 0))
+    )
+  )
+result |>
+  suppress(minCellCount = 10) |>
+  dplyr::filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
+  tableCharacteristics(
+    header = "age_group", 
+    groupColumn = "cohort_name",
+    hide = c("table", "window", "value", "cdm_name")
+  )
+```

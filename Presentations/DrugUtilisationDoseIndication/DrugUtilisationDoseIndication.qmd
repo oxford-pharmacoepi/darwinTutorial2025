@@ -70,33 +70,27 @@ install.packages("DrugUtilisation")
 For this example we are going to use
 
 ```{r}
-library(DBI)
+dbPath <- here::here("darwinTutorialTest.duckdb")
+options(timeout = 600)
+download.file(
+  url = "https://github.com/oxford-pharmacoepi/darwinTutorial2024/raw/refs/heads/main/database/darwinTutorialTest.duckdb",
+  destfile = dbPath,
+  mode = "wb",
+  method = "auto",
+  quiet = FALSE,
+  extra = list(progressfunction = function(downloaded, total) {
+    progress <- min(1, downloaded/total)
+    cli::cli_progress_update(id = pb, set = progress)
+  })
+)
+
 library(duckdb)
 library(CDMConnector)
 library(dplyr)
 library(here)
 
-db <- dbConnect(duckdb(), dbdir = eunomia_dir())
-cdm <- cdmFromCon(con = db, cdmSchema = "main", writeSchema = "main")
-```
-
-## Fix eunomia problems with drugs
-
-Add a drug_strength table:
-
-```{r}
-x <- read.csv("https://raw.githubusercontent.com/darwin-eu-dev/DrugUtilisation/main/extras/mock_drug_strength.csv")
-cdm <- insertTable(cdm = cdm, name = "drug_strength", table = x)
-```
-
-. . .
-
-Fix quantity:
-
-```{r}
-cdm$drug_exposure <- cdm$drug_exposure |>
-  mutate(quantity = days_supply) |>
-  compute(name = "drug_exposure", temporary = FALSE)
+db <- dbConnect(duckdb(), dbdir = dbPath)
+cdm <- cdmFromCon(con = db, cdmSchema = "public", writeSchema = "results")
 ```
 
 ## Generate the drug cohort
@@ -104,7 +98,7 @@ cdm$drug_exposure <- cdm$drug_exposure |>
 ```{r, message=FALSE}
 library(CodelistGenerator)
 library(DrugUtilisation)
-codelist <- getDrugIngredientCodes(cdm = cdm, name = "acetaminophen")
+codelist <- getDrugIngredientCodes(cdm = cdm, name = "nitroglycerin")
 cdm <- generateDrugUtilisationCohortSet(
   cdm = cdm,
   name = "dus_cohort",
@@ -118,7 +112,7 @@ cdm <- generateDrugUtilisationCohortSet(
 ```{r}
 result <- cdm$dus_cohort |>
   summariseDrugUtilisation(
-    ingredientConceptId = , 
+    ingredientConceptId = 1361711, 
     conceptSet = codelist,
     indexDate = "cohort_start_date",
     censorDate = "cohort_end_date", 
@@ -131,34 +125,47 @@ result <- cdm$dus_cohort |>
     initialQuantity = TRUE, 
     cumulativeQuantity = TRUE, 
     initialDailyDose = TRUE, 
-    cumulativeDose = TRUE
+    cumulativeDose = TRUE,
+    estimates = c("q25", "median", "q75")
   )
 ```
 
 ## Drug usage
 
 ```{r}
-tableDrugUtilisation(result)
+result |>
+  suppress(minCellCount = 5) |>
+  tableDrugUtilisation()
 ```
 
 ## Indications
 
 `summariseIndication()`:
 
-- To summarise **mutually exclusive** indications.
+-   To summarise **mutually exclusive** indications.
 
-- Define a window respect to the 'cohort_start_date'.
+-   Define a window respect to the 'cohort_start_date'.
 
-- Indications must be instantiated beforehand as cohorts. 
+-   Indications must be instantiated beforehand as cohorts.
 
-- Unknown indication (check a table to see if there is a record).
+-   Unknown indication (check a table to see if there is a record).
 
 ## Indications
 
 Let's instantiate the cohorts of interest:
 
 ```{r}
-
+cdm <- generateConceptCohortSet(
+  cdm = cdm,
+  conceptSet = list(
+    arteriosclerosis = 317576, 
+    myocardial_infarction = 4329847, 
+    pain = getCandidateCodes(cdm = cdm, keywords = "pain")$concept_id
+  ),
+  name = "indications",
+  limit = "all",
+  end = 0
+)
 ```
 
 ## Indciations
@@ -170,12 +177,16 @@ result <- cdm$dus_cohort |>
     indicationWindow = list(c(0, 0), c(-30, 7)), 
     unknownIndicationTable = "condition_occurrence"
   )
+result |>
+  glimpse()
 ```
 
 ## Indications
 
 ```{r}
-tableIndication(result)
+result |>
+  suppress() |>
+  tableIndication()
 ```
 
 ## Indications
@@ -184,13 +195,35 @@ tableIndication(result)
 plotIndication(result)
 ```
 
+## Indications
+
+Output of ploting functions are **ggplot2** objects.
+
+. . .
+
+```{r}
+plotIndication(result) +
+  ggplot2::theme(legend.position = "none")
+```
+
+## Indications
+
+Currently considering to add support for **plotly**.
+
+. . .
+
+```{r}
+plotIndication(result) |>
+  plotly::ggplotly()
+```
+
 ## Treatment persistence
 
 To analyse treatment persistence and adherence there are two standard pipelines:
 
-- Survival analysis (implemented in the [CohortSurvival](https://cran.r-project.org/package=CohortSurvival) package)
+-   Survival analysis (implemented in the [CohortSurvival](https://cran.r-project.org/package=CohortSurvival) package)
 
-- Proportion of patients covered
+-   Proportion of patients covered
 
 ## Proportion of patients covered
 
@@ -213,32 +246,66 @@ tableProportionOfPatientsCovered(result)
 plotProportionOfPatientsCovered(result)
 ```
 
+. . .
+
+`gapEra` parameter can have a big impact in survival analysis, whereas it does not have such big impact on proportion of patients covered.
+
+## Your turn
+
+Can you create a cohort of a certain ingredient and analyse its persistence in the following year?
+
+*suggestions: 'clopidogrel', 'nitroglycerin', 'simvastatin', 'amlodipine', 'verapamil' are the 5 most common ingredients in this database*
+
+## Result
+
+```{r, echo=FALSE}
+cdm <- generateIngredientCohortSet(
+  cdm = cdm, 
+  name = "persistence", 
+  ingredient = c('clopidogrel', 'nitroglycerin', 'simvastatin', 'amlodipine', 'verapamil')
+)
+result <- cdm$persistence |>
+  summariseProportionOfPatientsCovered(followUpDays = 365)
+plotProportionOfPatientsCovered(result, colour = "group_level")
+```
+
 ## Drug restart and drug switching
 
 We have the ability to study drug restart or drug switching after a discontinuation:
 
-- Switching cohorts must be defined in advance.
+-   Switching cohorts must be defined in advance.
 
-- We have to define the windows of interest.
+-   We have to define the windows of interest.
 
-- Index date will be the date of discontinuation.
+-   Index date will be the date of discontinuation.
 
-- Reported percentages in each window will be:
+-   Reported percentages in each window will be:
 
- - *Restart*: individuals that restarted and not switched.
- - *Switch*: individuals that switched and not restarted.
- - *Restart and switch*: individuals that restarted and switched.
- - *Untreated*: individuals that did not restart or switch.
+-   *Restart*: individuals that restarted and not switched.
+
+-   *Switch*: individuals that switched and not restarted.
+
+-   *Restart and switch*: individuals that restarted and switched.
+
+-   *Untreated*: individuals that did not restart or switch.
 
 ## Drug restart and drug switching
 
 Let's define the cohorts of interest for switching:
 
 ```{r}
-
+cdm <- generateIngredientCohortSet(
+  cdm = cdm,
+  name = "switch",
+  ingredient = c("clopidogrel", "simvastatin", "warfarin")
+)
 ```
 
 ## Drug restart and drug switching
+
+We have to be careful with the inclusion criteria of the input cohort, as restart is derived from it.
+
+. . .
 
 ```{r}
 result <- cdm$dus_cohort |>
@@ -247,6 +314,8 @@ result <- cdm$dus_cohort |>
     followUpDays = c(90, 180, 270, 360), 
     restrictToFirstDiscontinuation = TRUE
   )
+result |>
+  glimpse()
 ```
 
 ## Drug restart and drug switching
@@ -263,4 +332,45 @@ plotDrugRestart(result)
 
 ## Summarise treatments
 
-`summariseTreatment()` is a general function
+`summariseTreatment()` is a general function to analyse presence of treatments (cohorts) after an index date. This can be used with many different purposes:
+
+- Summarise treatments after a certain condition
+
+- Analyse comedications
+
+- Analyse treatments after discontinuation
+
+- ...
+
+## Summarise treatments
+
+You have to instantiate the treatments that you are interested in a cohort:
+
+```{r}
+cdm <- generateIngredientCohortSet(
+  cdm = cdm,
+  name = "treatments",
+  ingredient = c("clopidogrel", "simvastatin", "warfarin", "nitroglycerin")
+)
+result <- cdm$dus_cohort |>
+  summariseTreatment(
+    window = list(c(1, 90), c(91, 180), c(181, 270), c(271, 360)), 
+    treatmentCohortName = "treatments", 
+    indexDate = "cohort_end_date", 
+    censorDate = NULL
+  )
+result |>
+  glimpse()
+```
+
+## Summarise treatments
+
+```{r}
+tableTreatment(result)
+```
+
+## Summarise treatments
+
+```{r}
+plotTreatment(result)
+```
