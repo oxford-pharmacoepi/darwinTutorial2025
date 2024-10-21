@@ -16,7 +16,7 @@ In this repo you can find the source code for the presentation and exercises for
 
 ## Presentations
 
-- [Introduction](https://dpa-pde-oxford.quarto.pub/introduction-ohdsi-us-2024/)
+- [Introduction](https://github.com/oxford-pharmacoepi/darwinTutorial2024/tree/main/Presentations/Introduction/)
 - [CDMConnector](https://dpa-pde-oxford.quarto.pub/cdmconnector-ohdsi-us-2024/)
 - [DrugUtilisation Cohorts](https://dpa-pde-oxford.quarto.pub/ohdsi-us-2024-drugutilisationcohorts/)
 - [Characterisation](https://dpa-pde-oxford.quarto.pub/ohdsi-us-2024-cohortcharacteristics/)
