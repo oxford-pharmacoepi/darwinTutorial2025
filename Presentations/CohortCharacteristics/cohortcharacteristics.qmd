@@ -100,7 +100,7 @@ flowchart LR
 
 ## Create the cdm reference
 
-```{r}
+```{r, eval=FALSE}
 dbPath <- here::here("darwinTutorialTest.duckdb")
 options(timeout = 600)
 download.file(
@@ -114,7 +114,14 @@ download.file(
     cli::cli_progress_update(id = pb, set = progress)
   })
 )
+```
 
+
+```{r, echo=FALSE}
+dbPath <- '/Users/martics/Documents/GitHub/darwinTutorial2024/database/darwinTutorialTest.duckdb'
+```
+
+```{r}
 library(duckdb)
 library(CDMConnector)
 library(dplyr)
