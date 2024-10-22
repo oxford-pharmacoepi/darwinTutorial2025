@@ -86,7 +86,6 @@ download.file(
 )
 ```
 
-
 ```{r, echo=FALSE}
 dbPath <- '/Users/martics/Documents/GitHub/darwinTutorial2024/database/darwinTutorialTest.duckdb'
 ```
@@ -435,11 +434,11 @@ Having all this into account the recommended order to apply criteria would be:
 
 Can you create a cohort with all the records of 'simvastatin' concatenating records separated by 90 days or less and the following inclusion criteria:
 
-- First record ever
+-   First record ever
 
-- At least 365 days of prior observation
+-   At least 365 days of prior observation
 
-- Cohort start date between '2010-01-01' and '2021-12-31'.
+-   Cohort start date between '2010-01-01' and '2021-12-31'.
 
 ## Result
 

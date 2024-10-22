@@ -20,11 +20,11 @@ In this repo you can find the source code for the presentation and exercises for
 - [CDMConnector](https://dpa-pde-oxford.quarto.pub/cdmconnector-ohdsi-us-2024/)
 - [DrugUtilisation Cohorts](https://dpa-pde-oxford.quarto.pub/ohdsi-us-2024-drugutilisationcohorts/)
 - [Characterisation](https://dpa-pde-oxford.quarto.pub/ohdsi-us-2024-cohortcharacteristics/)
-- [DrugUtilisation](https://dpa-pde-oxford.quarto.pub/drugutilisation-ohdsi-us-2024/)
+- [DrugUtilisation](https://dpa-pde-oxford.quarto.pub/ohdsi-us-2024-drugutilisationdoseindication/#/drugutilisation)
 - [TreatmentPatterns](https://github.com/oxford-pharmacoepi/darwinTutorial2024/tree/main/Presentations/TreatmentPatterns/)
 
 ## Posit cloud
 
-A posit cloud account is available which all the packages installed and **GiBleed** synthetic database downloaded so you can follow the presentation:
+A posit cloud account is available which all the packages installed and a synthetic database downloaded so you can follow the presentation:
 
 - [Posit cloud](https://posit.cloud/spaces/562431/join?access_code=v5L4fNH-hmUjbkYzS-1sTTopISrbYfO2mUn4IOSo)

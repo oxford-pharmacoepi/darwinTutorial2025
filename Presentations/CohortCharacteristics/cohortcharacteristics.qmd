@@ -461,3 +461,7 @@ result |>
     hide = c("table", "window", "value", "cdm_name")
   )
 ```
+
+## CohortCharacteristics
+
+[![](https://github.com/darwin-eu-dev/CohortCharacteristics/blob/main/man/figures/logo.png?raw=true){fig-align="center" width="5.5in"}](https://darwin-eu-dev.github.io/CohortCharacteristics/)
