@@ -14,6 +14,12 @@ In this repo you can find the source code for the presentation and exercises for
 |__15.30 to 16.00__ | Ed | Estimating incidence of drug use in the population  |
 |__16.00 to 17.00__ | Maarten | TreatmentPatterns  |
 
+## Where to work
+
+We're going to be using conducting our analyses in R. To follow along you have two options:
+- Posit cloud is an online environment where we have installed all the required packages and downloaded the data that will be used. Click [here](https://posit.cloud/spaces/562431/join?access_code=v5L4fNH-hmUjbkYzS-1sTTopISrbYfO2mUn4IOSo) to access the posit cloud instance (note, you will need to create a free account first).
+- If you have R and RStudio installed on your latpop you should be able to follow along. Note that you will need to download a small dataset and install packages as we go. 
+
 ## Presentations
 
 - [Introduction](https://github.com/oxford-pharmacoepi/darwinTutorial2024/tree/main/Presentations/Introduction/)
@@ -23,8 +29,3 @@ In this repo you can find the source code for the presentation and exercises for
 - [DrugUtilisation Analyses](https://dpa-pde-oxford.quarto.pub/ohdsi-us-2024-drugutilisationdoseindication/#/drugutilisation)
 - [TreatmentPatterns](https://github.com/oxford-pharmacoepi/darwinTutorial2024/tree/main/Presentations/TreatmentPatterns/)
 
-## Posit cloud
-
-A posit cloud account is available which all the packages installed and a synthetic database downloaded so you can follow the presentation:
-
-- [Posit cloud](https://posit.cloud/spaces/562431/join?access_code=v5L4fNH-hmUjbkYzS-1sTTopISrbYfO2mUn4IOSo)
