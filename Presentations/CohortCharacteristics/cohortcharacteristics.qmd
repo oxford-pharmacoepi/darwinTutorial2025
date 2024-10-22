@@ -232,8 +232,7 @@ The output is a [DiagrammeR](https://rich-iannone.github.io/DiagrammeR/) object:
 
 ```{r, eval=FALSE}
 plt <- plotCohortAttrition(result)
-svg <- DiagrammeRsvg::export_svg(plt)
-DiagrammeRsvg::rsvg_png(DiagrammeRsvg::charToRaw(svg), file = "attrition.png")
+# DiagrammeRsvg::export_svg(plt)
 ```
 
 ## Your turn
