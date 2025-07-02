@@ -1,4 +1,4 @@
-# OHDSI US 2024: Conducting 'Off-The-Shelf' Characterization Studies Using DARWIN EU® Tools and the OMOP CDM
+# OHDSI Europe 2025: Conducting 'Off-The-Shelf' Characterization Studies Using DARWIN EU® Tools and the OMOP CDM
 
 In this repo you can find the source code for the presentation and exercises for: **Conducting 'Off-The-Shelf' Characterization Studies Using DARWIN EU Tools and the OMOP CDM** tutorial conducted on the OHDSI US 2024 conference.
 
