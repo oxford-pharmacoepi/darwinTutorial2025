@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -71,6 +106,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 <meta property="og:title" content="Running characterisation studies from beginning to end: a tutorial using DARWIN-EU® standardised analytics">
+<meta property="og:description" content="">
 <meta property="og:site_name" content="Running characterisation studies from beginning to end: a tutorial using DARWIN-EU® standardised analytics">
 </head>
 
@@ -100,7 +136,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Set up</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./Presentations/index.qmd"> 
+    <a class="nav-link" href="./Presentations/index.html"> 
 <span class="menu-text">Presentations</span></a>
   </li>  
   <li class="nav-item">
@@ -118,8 +154,22 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#set-up" id="toc-set-up" class="nav-link active" data-scroll-target="#set-up">Set up</a>
+  <ul class="collapse">
+  <li><a href="#run-locally-instructions" id="toc-run-locally-instructions" class="nav-link" data-scroll-target="#run-locally-instructions">Run locally instructions</a>
+  <ul class="collapse">
+  <li><a href="#the-basis" id="toc-the-basis" class="nav-link" data-scroll-target="#the-basis">0. The basis</a></li>
+  <li><a href="#install-packages" id="toc-install-packages" class="nav-link" data-scroll-target="#install-packages">1. Install packages</a></li>
+  <li><a href="#mock-data" id="toc-mock-data" class="nav-link" data-scroll-target="#mock-data">2. Mock data</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/oxford-pharmacoepi/darwinTutorial2025/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -148,8 +198,99 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<section id="set-up" class="level1">
+<h1>Set up</h1>
+<p>There are two ways to run the code and follow the presentations and the practical:</p>
+<ul>
+<li><p><strong>Posit cloud</strong>, we have created a space for you with all the packages installed and the synthetic data downloaded. Note you will need to create a free account. Follow this <a href="">link</a> to access it.</p></li>
+<li><p><strong>Run code locally</strong> follow the above instructions to set up your environment.</p></li>
+</ul>
+<section id="run-locally-instructions" class="level2">
+<h2 class="anchored" data-anchor-id="run-locally-instructions">Run locally instructions</h2>
+<section id="the-basis" class="level3">
+<h3 class="anchored" data-anchor-id="the-basis">0. The basis</h3>
+<ul>
+<li>You will need R (&gt;= 4.1.0) and RStudio installed.</li>
+<li>Create a new project.</li>
+</ul>
+</section>
+<section id="install-packages" class="level3">
+<h3 class="anchored" data-anchor-id="install-packages">1. Install packages</h3>
+<ul>
+<li>Run the following code to install all the required packages:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"pak"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pak<span class="sc">::</span><span class="fu">pkg_install</span>(<span class="fu">c</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"duckdb"</span>, <span class="st">"omopgenerics"</span>, <span class="st">"CDMConnector"</span>, <span class="st">"CodelistGenerator"</span>, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CohortCharacteristics"</span>, <span class="st">"TreatmentPatterns"</span>, <span class="st">"visOmopResults"</span>, <span class="st">"gt"</span>, </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"reactable"</span>, <span class="st">"ggplot2"</span>, <span class="st">"plotly"</span>, <span class="st">"officer"</span>, <span class="st">"flextable"</span>, <span class="st">"DiagrammeR"</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DiagrammeRsvg"</span>, <span class="st">"grid"</span>, <span class="st">"png"</span>, <span class="st">"rsvg"</span>, <span class="st">"lubridate"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="mock-data" class="level3">
+<h3 class="anchored" data-anchor-id="mock-data">2. Mock data</h3>
+<p>In this step we will check that you can create a reference to the mock data, we will use <strong>GiBleed</strong> for the three presentations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>CDMConnector<span class="sc">::</span><span class="fu">requireEunomia</span>(<span class="at">datasetName =</span> <span class="st">"GiBleed"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>ℹ `EUNOMIA_DATA_FOLDER` set to: '/tmp/RtmpE9pz9x'.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Download completed!</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: DBI</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(CDMConnector)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>datasetName <span class="ot">&lt;-</span> <span class="st">"GiBleed"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">requireEunomia</span>(<span class="at">datasetName =</span> datasetName)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="at">drv =</span> <span class="fu">duckdb</span>(<span class="at">dbdir =</span> <span class="fu">eunomiaDir</span>(<span class="at">datasetName =</span> datasetName)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Creating CDM database /tmp/RtmpE9pz9x/GiBleed_5.3.zip</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>cdm <span class="ot">&lt;-</span> <span class="fu">cdmFromCon</span>(<span class="at">con =</span> con, <span class="at">cdmSchema =</span> <span class="st">"main"</span>, <span class="at">writeSchema =</span> <span class="st">"main"</span>, <span class="at">cdmName =</span> datasetName)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cdm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── # OMOP CDM reference (duckdb) of GiBleed ────────────────────────────────────</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• omop tables: person, observation_period, visit_occurrence, visit_detail,
+condition_occurrence, drug_exposure, procedure_occurrence, device_exposure,
+measurement, observation, death, note, note_nlp, specimen, fact_relationship,
+location, care_site, provider, payer_plan_period, cost, drug_era, dose_era,
+condition_era, metadata, cdm_source, concept, vocabulary, domain,
+concept_class, concept_relationship, relationship, concept_synonym,
+concept_ancestor, source_to_concept_map, drug_strength</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• cohort tables: -</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• achilles tables: -</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>• other tables: -</code></pre>
+</div>
+</div>
+<p>If it worked you can now disconnect from the <code>cdm_reference</code> and you are <strong>ready</strong> 🎉.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cdmDisconnect</span>(<span class="at">cdm =</span> cdm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -559,7 +700,7 @@ ul.task-list li input[type="checkbox"] {
     </div>   
     <div class="nav-footer-center">
 <p>Rendered on July 4, 2025</p>
-<div class="toc-actions"><ul><li><a href="https://github.com/oxford-pharmacoepi/darwinTutorial2025/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/oxford-pharmacoepi/darwinTutorial2025/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
