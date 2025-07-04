@@ -1,0 +1,347 @@
+---
+title: "TreatmentPatterns"
+author: "Maarten van Kessel"
+format:
+  revealjs: 
+    theme: [simple, styleOU.scss]
+    incremental: true   
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    margin: 0.07
+    code-link: true
+    code-line-numbers: false
+    footer: "Running characterisation studies from beginning to end: a tutorial using DARWIN EU standarised analytics"
+    code-overflow: wrap
+  html: 
+    code-overflow: wrap
+    overflow-x: auto
+    overflow-y: auto
+execute:
+  echo: true
+  eval: true
+  warning: false
+  output-width: 100%
+editor: visual
+---
+
+## Installation
+
+```{r}
+library(TreatmentPatterns)
+library(CDMConnector)
+library(dplyr)
+library(DBI)
+library(duckdb)
+```
+
+## Setup
+
+```{r, message=FALSE}
+con <- DBI::dbConnect(
+  drv = duckdb::duckdb(),
+  dbdir = CDMConnector::eunomiaDir()
+)
+
+cdm <- CDMConnector::cdmFromCon(
+  con = con,
+  cdmSchema = "main",
+  writeSchema = "main",
+  cdmName = "Dummy CDM"
+)
+```
+
+# Disclaimer
+
+**Everything we do today uses Synthetic data**
+
+# Study Question
+
+## Patterns of treatments before, during, and after Viral Sinusitis
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+Indication Windows:
+
+1.  Two weeks prior Viral Sinusitis
+2.  During Viral Sinusitis
+3.  Two weeks after Viral Sinusitis
+
+:::
+
+::: {.column width="50%"}
+
+Treatments of interest:
+
+1.  Acetaminophen
+2.  Amoxicillin
+3.  Aspirin
+4.  Clavunate
+5.  Doxylamine
+6.  Penicillin V
+
+:::
+
+::::
+
+
+## Patterns of treatments before, during, and after Viral Sinusitis
+
+![](presentation_files/img/Viral_Sinusitis_periods.png)
+
+# TreatmentPatterns options
+
+## Interfacing with the CDM
+
+-   **cohorts**: Table dictating which cohort is of what type.
+-   **cohortTableName**: Name of the cohort table(s) to use.
+-   **CDM interface**: Either through CDMConnector or DatabaseConnector
+
+## Interfacing with the CDM
+
+### CDMConnector
+
+-   **cdm**: CDM-reference to use.
+
+### DatabaseConnector
+
+-   **connectionDetails**: ConnectionDetails object.
+-   **cdmSchema**: Schema where the CDM resides.
+-   **resultSchema**: Schema where the cohort table resides.
+-   **tempEmulationSchema**: Temp schema.
+
+## Analysis Information
+
+-   **analysisId**: ID to identify the analysis.
+-   **description**: Description of the analysis.
+
+## Windowing
+
+-   **startAnchor**: Anchor on Start or End date.
+-   **windowStart**: Offset of **startAnchor**.
+-   **endAnchor**: Anchor on Start or End date.
+-   **windowEnd**: Offset of **endAnchor**. ![](presentation_files/img/window.png)
+
+## Pathway construction
+
+-   **minEraDuration**: Minimum duration of events.
+-   **combinationWindow**: Minimum overlap between events to be considered a combination event.
+-   **minPostCombinationDuration**: Minimum duration of (combination) events to keep after combining events.
+-   **concatTargets**: Should multiple **targets** be concatenated, or treated as separate events?
+-   **filterTreatments**: Which events should we consider?
+
+# Execution
+
+## Generating Cohorts
+
+```{r}
+cohortSet <- CDMConnector::readCohortSet(
+  path = "./cohorts/"
+)
+
+cdm <- CDMConnector::generateCohortSet(
+  cdm = cdm,
+  cohortSet = cohortSet,
+  name = "cohort_table"
+)
+```
+
+## Cohort Counts
+
+```{r}
+CDMConnector::cohortCount(cdm$cohort_table)
+```
+
+## Viral Sinusitis Attrition
+
+```{r}
+CDMConnector::attrition(cdm$cohort_table) %>%
+  # ID 7 == Viral Sinusitis
+  dplyr::filter(.data$cohort_definition_id == 7)
+```
+
+## Target and Events
+
+```{r}
+cohorts <- cohortSet |>
+  dplyr::select(
+    cohortId = "cohort_definition_id",
+    cohortName = "cohort_name"
+  ) |>
+  dplyr::mutate(
+    type = c(rep("event", 6), "target")
+  )
+
+cohorts
+```
+
+## Two Weeks Prior to Viral Sinusitis
+
+```{r, message=TRUE}
+weekPrior <- TreatmentPatterns::computePathways(
+  cohorts = cohorts,
+  cohortTableName = "cohort_table",
+  cdm = cdm,
+
+  analysisId = 1,
+  description = "Two weeks prior",
+
+  startAnchor = "startDate",
+  windowStart = -14,
+  endAnchor = "startDate",
+  windowEnd = -1,
+
+  minEraDuration = 5,
+  combinationWindow = 7,
+  minPostCombinationDuration = 5,
+  concatTargets = FALSE,
+  filterTreatments = "All"
+)
+```
+
+## During Viral Sinusitis
+
+```{r, message=TRUE}
+during <- TreatmentPatterns::computePathways(
+  cohorts = cohorts,
+  cohortTableName = "cohort_table",
+  cdm = cdm,
+
+  analysisId = 2,
+  description = "During",
+
+  startAnchor = "startDate",
+  windowStart = 0,
+  endAnchor = "endDate",
+  windowEnd = 0,
+
+  minEraDuration = 5,
+  combinationWindow = 7,
+  minPostCombinationDuration = 5,
+  concatTargets = FALSE,
+  filterTreatments = "All"
+)
+```
+
+## Two Weeks After Viral Sinusitis
+
+```{r, message=TRUE}
+after <- TreatmentPatterns::computePathways(
+  cohorts = cohorts,
+  cohortTableName = "cohort_table",
+  cdm = cdm,
+
+  analysisId = 3,
+  description = "Two weeks after",
+
+  startAnchor = "endDate",
+  windowStart = 0,
+  endAnchor = "endDate",
+  windowEnd = 14,
+
+  minEraDuration = 5,
+  combinationWindow = 7,
+  minPostCombinationDuration = 5,
+  concatTargets = FALSE,
+  filterTreatments = "All"
+)
+```
+
+## Exporting
+
+```{r}
+priorRes <- TreatmentPatterns::export(weekPrior, minCellCount = 5, censorType = "remove")
+duringRes <- TreatmentPatterns::export(during, minCellCount = 5, censorType = "remove")
+afterRes <- TreatmentPatterns::export(after, minCellCount = 5, censorType = "remove")
+```
+
+## Counts
+
+```{r}
+data.frame(
+  label = c("Week Prior", "During", "Week Post"),
+  count = c(
+    sum(priorRes$treatment_pathways$freq),
+    sum(duringRes$treatment_pathways$freq),
+    sum(afterRes$treatment_pathways$freq)
+  )
+)
+```
+
+# Sunburst Plots
+
+```{r, echo=FALSE}
+labels <- c(
+  priorRes$treatment_pathways$pathway |>
+    stringr::str_split(pattern = "-") |>
+    unlist(),
+  
+  duringRes$treatment_pathways$pathway |>
+    stringr::str_split(pattern = "-") |>
+    unlist(),
+  
+  afterRes$treatment_pathways$pathway |>
+    stringr::str_split(pattern = "-") |>
+    unlist()
+) |>
+  unique()
+
+gg_colour_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+
+colours <- gg_colour_hue(length(labels)) |>
+  as.list()
+
+names(colours) <- labels
+```
+
+## Two weeks Prior
+
+```{r, echo=FALSE}
+priorRes$plotSunburst(
+  legend = FALSE,
+  colors = list(
+    domain = names(colours),
+    range = as.character(colours)
+  )
+)
+```
+
+## During
+
+```{r, echo=FALSE, out.height=500}
+duringRes$plotSunburst(
+  legend = FALSE,
+  colors = list(
+    domain = names(colours),
+    range = as.character(colours)
+  )
+)
+```
+
+## Two weeks after
+
+```{r, echo=FALSE, out.height=400}
+afterRes$plotSunburst(
+  legend = FALSE,
+  colors = list(
+    domain = names(colours),
+    range = as.character(colours)
+  )
+)
+```
+
+## Event time
+
+```{r}
+duringRes$plotEventDuration()
+```
+## Conclusion
+1. Significantly less use of treatments of interest two weeks before and after Viral Sinusitis.
+2. Pattern of use of treatments in period before and after Viral Sinusitis seems similar.
+3. Treatment during Viral Sinusitis is dominated by Amoxicillin + Clavunate (7 day overlap) with 93% with Clavunate as monotherapy following up with 5.9%. Both do not occur outside the Viral Sinusitis window.
+4. Clavunate and Acetaminophen were used as a second-line treatment, but in a negotiable amount of subjects.

@@ -1,0 +1,32 @@
+project:
+  type: website
+  output-dir: _site
+
+date: today
+
+website:
+  title: "Running characterisation studies from beginning to end: a tutorial using DARWIN-EU® standardised analytics"
+  open-graph: true # https://quarto.org/docs/websites/website-tools.html#open-graph
+  repo-url: https://github.com/oxford-pharmacoepi/darwinTutorial2025
+  repo-actions: [issue]
+  page-footer:
+    center: "Rendered on {{< meta date >}}"
+  navbar:
+    left:
+      - text: Program
+        href: program.qmd
+      - text: Set up
+        href: setup.qmd
+      - text: Presentations
+        href: Presentations/index.qmd
+      - text: Practical
+        href: practical.qmd
+
+format:
+  html:
+    toc: true
+    theme: 
+      - cosmo
+      - darwin.scss
+    search: false
+    

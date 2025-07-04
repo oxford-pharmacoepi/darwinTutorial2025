@@ -47,7 +47,7 @@ Sys.setenv("EUNOMIA_DATA_FOLDER" = here("eunomia"))
 To connect to this database we are going to use `duckdb`
 
 ```{r}
-db <- dbConnect(duckdb(), dbdir = eunomia_dir())
+db <- dbConnect(duckdb(), dbdir = eunomiaDir())
 db
 ```
 
