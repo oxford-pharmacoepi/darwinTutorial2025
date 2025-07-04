@@ -37,12 +37,15 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
+      - name: Render Quarto website
+        run: quarto render
+
       - name: Publish
         if: github.event_name != 'pull_request'
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
-          render: true
+          render: false
           publish_dir: ./_site
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
