@@ -10,3 +10,6 @@
 /Presentations/CohortCharacteristics/CohortCharacteristics_files/*
 /Presentations/DrugUtilisationDoseIndication/DrugUtilisationDoseIndication_files/*
 /Presentations/DrugUtilisationCohorts/DrugUtilisationCohorts_files/*
+
+/.quarto/
+/_site/

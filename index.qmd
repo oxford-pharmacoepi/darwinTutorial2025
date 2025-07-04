@@ -1,0 +1,13 @@
+# Running characterisation studies from beginning to end: a tutorial using DARWIN-EU® standardised analytics
+
+This website will be used during the workshop conducted at [OHDSI EUROPE 2025](https://www.ohdsi-europe.org/symposium-event) conference.
+
+See details:
+
+-   [**Program**](program.qmd), schedule of the practical sessions.
+-   [**Presentations**](Presentations/index.qmd), different presentations during the session.
+-   [**Practical**](practical.qmd), hands on practical instructions.
+
+<div style="text-align: center;">
+  <img src="images/darwin.png" width="200" />
+</div>
