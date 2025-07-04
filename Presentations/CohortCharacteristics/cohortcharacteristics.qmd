@@ -106,6 +106,7 @@ library(gt)
 library(reactable)
 library(ggplot2)
 library(plotly)
+library(officer)
 ```
 
 ```{r}
