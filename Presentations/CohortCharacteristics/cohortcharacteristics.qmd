@@ -99,6 +99,14 @@ flowchart LR
 ```
 
 ## Create the cdm reference
+```{r, echo=FALSE}
+# for renv
+library(visOmopResults)
+library(gt)
+library(reactable)
+library(ggplot2)
+library(plotly)
+```
 
 ```{r}
 library(duckdb)
