@@ -108,7 +108,7 @@ library(here)
 
 requireEunomia()
 db <- dbConnect(duckdb(), dbdir = eunomiaDir())
-cdm <- cdmFromCon(con = db, cdmSchema = "public", writeSchema = "results")
+cdm <- cdmFromCon(con = db, cdmSchema = "main", writeSchema = "main")
 ```
 
 ## summariseCohortAttrition
