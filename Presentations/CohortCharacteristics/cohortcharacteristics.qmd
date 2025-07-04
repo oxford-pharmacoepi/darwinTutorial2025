@@ -100,34 +100,14 @@ flowchart LR
 
 ## Create the cdm reference
 
-```{r, eval=FALSE}
-dbPath <- here::here("darwinTutorialTest.duckdb")
-options(timeout = 600)
-download.file(
-  url = "https://github.com/oxford-pharmacoepi/darwinTutorial2024/raw/refs/heads/main/database/darwinTutorialTest.duckdb",
-  destfile = dbPath,
-  mode = "wb",
-  method = "auto",
-  quiet = FALSE,
-  extra = list(progressfunction = function(downloaded, total) {
-    progress <- min(1, downloaded/total)
-    cli::cli_progress_update(id = pb, set = progress)
-  })
-)
-```
-
-
-```{r, echo=FALSE}
-dbPath <- '/Users/martics/Documents/GitHub/darwinTutorial2024/database/darwinTutorialTest.duckdb'
-```
-
 ```{r}
 library(duckdb)
 library(CDMConnector)
 library(dplyr)
 library(here)
 
-db <- dbConnect(duckdb(), dbdir = dbPath)
+requireEunomia()
+db <- dbConnect(duckdb(), dbdir = eunomiaDir())
 cdm <- cdmFromCon(con = db, cdmSchema = "public", writeSchema = "results")
 ```
 
