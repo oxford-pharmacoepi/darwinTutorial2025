@@ -104,6 +104,22 @@ flowchart LR
 
 ## Create the cdm reference
 
+```{r, echo=FALSE}
+library(visOmopResults)
+library(gt)
+library(reactable)
+library(ggplot2)
+library(plotly)
+library(officer)
+library(flextable)
+library(DiagrammeR)
+library(DiagrammeRsvg)
+library(grid)
+library(png)
+library(rsvg)
+library(lubridate)
+```
+
 ```{r}
 library(duckdb)
 library(CDMConnector)
