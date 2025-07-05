@@ -1,6 +1,5 @@
 ---
-title: "OMOP and CDMConnector"
-subtitle: "The OMOP Common Data Model"
+title: "Working with the OMOP CDM from R"
 format:
   revealjs: 
     theme: [simple, styleOU.scss]
@@ -13,12 +12,16 @@ format:
     code-line-numbers: false
     height: 900
     width: 1600
-    footer: "Conducting 'Off-The-Shelf' Characterization Studies Using DARWIN EU Tools and the OMOP CDM"
+    footer: "Conducting 'Off-The-Shelf' Characterisation Studies Using DARWIN EU Tools and the OMOP CDM"
 execute:
   echo: true
   eval: true
 editor: visual
 ---
+
+```{r, echo = FALSE}
+options(width = 120)
+```
 
 ## Standarisation of the data format
 
@@ -36,6 +39,7 @@ Eunomia is a synthetic OMOP database with \~2,600 individuals. It is freely avai
 library(DBI)
 library(dplyr)
 library(duckdb)
+library(omopgenerics)
 library(CDMConnector)
 library(here)
 # downloadEunomiaData(pathToData = here("eunomia"), overwrite = TRUE)
@@ -86,7 +90,103 @@ cdm[["observation_period"]] |> head(2)
 
 . . .
 
-## Creating a reference to the OMOP common data model
+
+## Behind the scenes
+
+The omopgenerics package defines core classes and methods used by CDMConnector and analytic packages.
+
+. . .
+
+Having omopgenerics as a central dependency reduces code duplication and ensures consistency across packages (eg function inputs, error messages, and results objects).
+
+. . .
+
+```{r}
+omopgenerics::validateCdmArgument(cdm = cdm, 
+                                  checkOverlapObservation = TRUE, 
+                                  checkStartBeforeEndObservation = TRUE, 
+                                  checkPlausibleObservationDates = TRUE)
+```
+
+
+## `<cdm_reference>` object
+
+```{r}
+class(cdm)
+```
+
+. . .
+
+```{r}
+cdmName(cdm)
+```
+
+. . .
+
+```{r}
+cdmVersion(cdm)
+```
+
+. . .
+
+```{r, message=TRUE}
+cdmSource(cdm)
+```
+
+## `<cdm_table>` object
+
+. . .
+
+```{r}
+cdm$person
+```
+
+. . .
+
+```{r}
+class(cdm$person)
+```
+
+## `<cdm_table>` object
+
+. . .
+
+```{r, message=TRUE}
+cdmReference(cdm$person)
+```
+
+. . .
+
+```{r}
+tableName(cdm$person)
+```
+
+. . .
+
+```{r, message=TRUE}
+tableSource(cdm$person)
+```
+
+## `<cdm_table>` object
+
+```{r}
+cdmName(cdm$person)
+```
+
+. . .
+
+```{r}
+cdmVersion(cdm$person)
+```
+
+. . .
+
+```{r, message=TRUE}
+cdmSource(cdm$person)
+```
+
+
+## Working with the cdm reference
 
 We can use common dplyr operations to interact with the data in our cdm reference
 
@@ -107,12 +207,18 @@ cdm$condition_occurrence |>
     max_condition_start = max(condition_start_date, na.rm = TRUE))
 ```
 
-. . .
 
-
-## Creating a reference to the OMOP common data model
+## Dplyr R code to SQL
 
 Behind the scenes our dplyr query is being translated into SQL.
+
+```{r}
+cdm$condition_occurrence |> 
+  count() |> 
+  show_query()
+```
+
+. . .
 
 ```{r}
 cdm$condition_occurrence |> 
@@ -123,7 +229,6 @@ cdm$condition_occurrence |>
   show_query()
 ```
 
-
 ## Your turn
 
 Using a cdm reference you have connected to:
@@ -133,163 +238,4 @@ Using a cdm reference you have connected to:
 2.  What is the minimum observation period start date?
 
 3.  What is the maximum observation period end date?
-
-
-## CDM vocabulary tables
-
-```{r}
-cdm$concept %>% glimpse()
-```
-
-## CDM vocabulary tables
-
-```{r}
-cdm$condition_occurrence %>% 
-  group_by(condition_concept_id) %>% 
-  tally() %>% 
-  left_join(cdm$concept %>% 
-              select("concept_id", "concept_name"),
-            by = c("condition_concept_id" = "concept_id")) %>% 
-  collect() %>% 
-  arrange(desc(n))
-```
-
-## CDM vocabulary tables
-
-```{r}
-cdm$concept_ancestor %>% glimpse()
-```
-
-## CDM vocabulary tables
-
-```{r}
-cdm$concept_relationship %>% glimpse()
-```
-
-## CDM vocabulary tables
-
-```{r}
-cdm$concept_synonym %>% glimpse()
-```
-
-## Vocabulary version
-
-Search results will be specific to the version of the vocabulary being used
-
-```{r}
-library(CodelistGenerator)
-getVocabVersion(cdm)
-```
-
-## Available vocabularies
-
-What vocabularies are available?
-
-```{r}
-getVocabularies(cdm = cdm)
-```
-
-## Available domains
-
-What domains are present?
-
-```{r}
-getDomains(cdm)
-```
-
-## Concept classes
-
-What concept classes are present?
-
-```{r}
-getConceptClassId(cdm,
-                  standardConcept = "Standard",
-                  domain = "Drug")
-```
-
-. . .
-
-```{r}
-getConceptClassId(cdm,
-                  standardConcept = "Standard",
-                  domain = "Condition")
-```
-
-## Your turn
-
-Using a cdm reference you have connected to:
-
-1.  What is the vocabulary version of the cdm?
-
-2.  How many concepts are in your concept table? How many of these are standard concepts?
-
-3.  What domains are available? Which domains would you use if you were defining a cohort of people with asthma?
-
-## Drug ingredients codelist
-
-```{r}
-ingredients <- getDrugIngredientCodes(cdm = cdm, nameStyle = "{concept_name}")
-ingredients
-```
-
-. . .
-
-```{r}
-ingredients$warfarin
-```
-
-. . .
-
-```{r}
-cdm$concept |> 
-  filter(concept_id %in% c(1310149, 40163554))
-```
-
-## Drug ingredients codelist
-
-```{r}
-ingredients <- getDrugIngredientCodes(cdm = cdm, name = "warfarin", nameStyle = "{concept_name}")
-```
-
-. . .
-
-```{r}
-stratifyByDoseUnit(ingredients, cdm)
-```
-
-. . .
-
-```{r}
-stratifyByRouteCategory(ingredients, cdm)
-```
-
-
-## Your turn
-
-Using Eunomia data:
-
-1.  Get codes for memantine using `getDrugIngredientCodes`
-
-2.  Stratify your memantine codes by their route
-
-# DrugExposureDiagnostics  
-
-```{r}
-library(DrugExposureDiagnostics)
-
-cdm_mock <- mockDrugExposure()
-result <- executeChecks(cdm_mock, 
-                        ingredients = c(1125315), 
-                        checks = c("exposureDuration",
-                                   "missing"))
-
-result$missingValuesOverall |> 
-  glimpse()
-
-
-result$drugExposureDurationOverall |> 
-  glimpse()
-
-```
-
 
