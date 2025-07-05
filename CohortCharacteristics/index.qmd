@@ -137,6 +137,7 @@ library(gt)
 library(ggplot2)
 library(dplyr, warn.conflicts = FALSE)
 library(visOmopResults)
+library(plotly)
 ```
 
 ## Create `GiBleed` cdm_reference object
@@ -573,6 +574,33 @@ tableLargeScaleCharacteristics(result = result, compareBy = "variable_level")
 tableLargeScaleCharacteristics(result = result, compareBy = "variable_level", smdReference = "-365 to -1")
 ```
 :::
+
+## plotLargeScaleCharacteristics
+
+```{r}
+plotLargeScaleCharacteristics(result = result)
+```
+
+## plotComparedLargeScaleCharacteristics
+
+```{r}
+plotComparedLargeScaleCharacteristics(
+  result = result, 
+  colour = "variable_level", 
+  facet = "table_name"
+)
+```
+
+## plotComparedLargeScaleCharacteristics
+
+```{r}
+plotComparedLargeScaleCharacteristics(
+  result = result, 
+  colour = "variable_level", 
+  facet = "table_name"
+) |>
+  ggplotly()
+```
 
 ## CohortCharacteristics
 
