@@ -118,6 +118,9 @@ library(grid)
 library(png)
 library(rsvg)
 library(lubridate)
+library(CirceR)
+library(SqlRender)
+library(rJava)
 ```
 
 ```{r}
