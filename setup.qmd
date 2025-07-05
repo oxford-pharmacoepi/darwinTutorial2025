@@ -2,52 +2,24 @@
 
 There are two ways to run the code and follow the presentations and the practical:
 
-- **Posit cloud**, we have created a space for you with all the packages installed and the synthetic data downloaded. Note you will need to create a free account. Follow this [link]() to access it.
+-   **Posit cloud**, we have created a space for you with all the packages installed and the synthetic data downloaded. Note you will need to create a free account. Follow this [link]() to access it.
 
-- **Run code locally** follow the above instructions to set up your environment.
+-   **Run code locally** follow the above instructions to set up your environment.
 
 ## Run locally instructions
 
 ### 0. The basis
 
-- You will need R (>= 4.1.0) and RStudio installed.
-- Create a new project.
+-   You will need R (\>= 4.1.0) and RStudio installed.
 
-### 1. Install packages
+### 1. Download and open the project
 
-- Run the following code to install all the required packages:
+-   Click [here](https://github.com/oxford-pharmacoepi/darwinTutorial2025Practical/archive/refs/heads/main.zip) to download the zip file with the project.
 
-```{r, eval=FALSE}
-install.packages("pak")
-pak::pkg_install(c(
-  "duckdb", "omopgenerics", "CDMConnector", "CodelistGenerator", 
-  "CohortCharacteristics", "TreatmentPatterns", "visOmopResults", "gt", 
-  "reactable", "ggplot2", "plotly", "officer", "flextable", "DiagrammeR",
-  "DiagrammeRsvg", "grid", "png", "rsvg", "lubridate"
-))
-```
+-   Open the `project.Rproj` your project is open if it appears **darwinTutorial2025Practical** on the top right of your RStudio window.
 
-### 2. Mock data
+![](project.png){fig-align="center" width=50%}
 
-In this step we will check that you can create a reference to the mock data, we will use **GiBleed** for the three presentations.
+### 2. Download packages and data
 
-```{r}
-CDMConnector::requireEunomia(datasetName = "GiBleed")
-```
-
-```{r, message=TRUE}
-library(duckdb)
-library(CDMConnector)
-
-datasetName <- "GiBleed"
-requireEunomia(datasetName = datasetName)
-con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = datasetName)))
-cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main", cdmName = datasetName)
-cdm
-```
-
-If it worked you can now disconnect from the `cdm_reference` and you are **ready** 🎉.
-
-```{r}
-cdmDisconnect(cdm = cdm)
-```
+-  Run the `setup.R` code so all packages and mock dataset are downloaded.
