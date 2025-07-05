@@ -17,10 +17,6 @@ format:
         <div style="position: fixed; top: 20px; left: 20px;"><a href="../index.qmd" style="text-decoration: none;">⬅ Back</a></div>
       </div>
     code-overflow: wrap
-  html: 
-    code-overflow: wrap
-    overflow-x: auto
-    overflow-y: auto
 execute:
   echo: true
   eval: true
