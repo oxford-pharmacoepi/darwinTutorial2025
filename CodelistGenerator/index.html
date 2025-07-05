@@ -95,7 +95,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-<link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-8b542d66b76ca5543245a29650e524a2.css">
+<link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-45b462d2348311ef3edc5594bbebf6c9.css">
 <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
 <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
 <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -250,7 +250,7 @@ source_to_concept_map, drug_strength
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">observation_period</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [?? x 5]
-# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f23be3e761.duckdb]
+# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253e30158cd0.duckdb]
   observation_period_id person_id observation_period_start_date observation_period_end_date period_type_concept_id
                   &lt;int&gt;     &lt;int&gt; &lt;date&gt;                        &lt;date&gt;                                       &lt;int&gt;
 1                     6         6 1963-12-31                    2007-02-06                                44814724
@@ -263,7 +263,7 @@ source_to_concept_map, drug_strength
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cdm</span><span class="op">[[</span><span class="st">"observation_period"</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [?? x 5]
-# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f23be3e761.duckdb]
+# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253e30158cd0.duckdb]
   observation_period_id person_id observation_period_start_date observation_period_end_date period_type_concept_id
                   &lt;int&gt;     &lt;int&gt; &lt;date&gt;                        &lt;date&gt;                                       &lt;int&gt;
 1                     6         6 1963-12-31                    2007-02-06                                44814724
@@ -323,7 +323,7 @@ source_to_concept_map, drug_strength
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">cdm</span><span class="op">$</span><span class="va">person</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   table&lt;person&gt; [?? x 18]
-# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f23be3e761.duckdb]
+# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253e30158cd0.duckdb]
    person_id gender_concept_id year_of_birth month_of_birth day_of_birth birth_datetime      race_concept_id
        &lt;int&gt;             &lt;int&gt;         &lt;int&gt;          &lt;int&gt;        &lt;int&gt; &lt;dttm&gt;                        &lt;int&gt;
  1         6              8532          1963             12           31 1963-12-31 00:00:00            8516
@@ -428,7 +428,7 @@ source_to_concept_map, drug_strength</code></pre>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [?? x 1]
-# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f23be3e761.duckdb]
+# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253e30158cd0.duckdb]
       n
   &lt;dbl&gt;
 1 65332</code></pre>
@@ -444,7 +444,7 @@ source_to_concept_map, drug_strength</code></pre>
 <span>    max_condition_start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">condition_start_date</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [?? x 3]
-# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f23be3e761.duckdb]
+# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253e30158cd0.duckdb]
   min_condition_start median_condition_start max_condition_start
   &lt;date&gt;              &lt;dttm&gt;                 &lt;date&gt;             
 1 1908-10-30          1986-12-09 00:00:00    2019-06-29         </code></pre>
@@ -550,7 +550,7 @@ source_to_concept_map, drug_strength</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: ??
 Columns: 10
-Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f2299b7106.duckdb]
+Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253ee3e09da.duckdb]
 $ concept_id       &lt;int&gt; 35208414, 1118088, 40213201, 1557272, 4336464, 4295880, 3020630, 19129655, 44923712, 1569708,…
 $ concept_name     &lt;chr&gt; "Gastrointestinal hemorrhage, unspecified", "celecoxib 200 MG Oral Capsule [Celebrex]", "pneu…
 $ domain_id        &lt;chr&gt; "Condition", "Drug", "Drug", "Drug", "Procedure", "Procedure", "Measurement", "Drug", "Drug",…
@@ -598,7 +598,7 @@ $ invalid_reason   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: ??
 Columns: 4
-Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f2299b7106.duckdb]
+Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253ee3e09da.duckdb]
 $ ancestor_concept_id      &lt;int&gt; 4180628, 4179141, 21500574, 21505770, 21503967, 36203060, 36151386, 21502552, 4076562…
 $ descendant_concept_id    &lt;int&gt; 313217, 4146173, 1118084, 1119510, 40162522, 40479422, 1119510, 1112807, 40769189, 19…
 $ min_levels_of_separation &lt;int&gt; 5, 2, 4, 0, 5, 4, 0, 4, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0, 0, 0…
@@ -611,7 +611,7 @@ $ max_levels_of_separation &lt;int&gt; 6, 2, 4, 0, 6, 4, 0, 4, 2, 2, 0, 0, 0, 0,
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: ??
 Columns: 6
-Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f2299b7106.duckdb]
+Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253ee3e09da.duckdb]
 $ concept_id_1     &lt;int&gt; 192671, 1118088, 1569708, 35208414, 35208414, 40162359, 44923712, 45011828
 $ concept_id_2     &lt;int&gt; 35208414, 44923712, 35208414, 192671, 1569708, 45011828, 1118088, 40162359
 $ relationship_id  &lt;chr&gt; "Mapped from", "Mapped from", "Subsumes", "Maps to", "Is a", "Mapped from", "Maps to", "Maps …
@@ -626,7 +626,7 @@ $ invalid_reason   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: ??
 Columns: 3
-Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f2299b7106.duckdb]
+Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253ee3e09da.duckdb]
 $ concept_id           &lt;int&gt; 964261, 1322184, 441267, 1718412, 4336464, 4102123, 4237458, 4280726, 4330583, 3014576, 4…
 $ concept_synonym_name &lt;chr&gt; "cyanocobalamin 5000 MCG/ML Injectable Solution", "clopidogrel", "Cystic fibrosis (disord…
 $ language_concept_id  &lt;int&gt; 4180186, 4180186, 4180186, 4180186, 4180186, 4180186, 4180186, 4180186, 4180186, 4180186,…</code></pre>
@@ -655,7 +655,7 @@ $ language_concept_id  &lt;int&gt; 4180186, 4180186, 4180186, 4180186, 4180186, 
 <div class="cell">
 <div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://darwin-eu.github.io/CodelistGenerator/reference/getDomains.html">getDomains</a></span><span class="op">(</span>cdm <span class="op">=</span> <span class="va">cdm</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "Observation" "Visit"       "Gender"      "Measurement" "Drug"        "Procedure"   "Condition"  </code></pre>
+<pre><code>[1] "Observation" "Visit"       "Gender"      "Drug"        "Procedure"   "Condition"   "Measurement"</code></pre>
 </div>
 </div>
 </section><section id="concept-classes" class="slide level2"><h2>Concept classes</h2>
@@ -733,7 +733,7 @@ along with 85 more codelists</code></pre>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">concept_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1310149</span>, <span class="fl">40163554</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   SQL [?? x 10]
-# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmprCKGc3/file24f2299b7106.duckdb]
+# Database: DuckDB v1.3.1 [unknown@Linux 6.11.0-1015-azure:R 4.5.1//tmp/RtmpHeIwp8/file253ee3e09da.duckdb]
   concept_id concept_name        domain_id vocabulary_id concept_class_id standard_concept concept_code valid_start_date
        &lt;int&gt; &lt;chr&gt;               &lt;chr&gt;     &lt;chr&gt;         &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;        &lt;date&gt;          
 1    1310149 Warfarin            Drug      RxNorm        Ingredient       S                11289        1970-01-01      
