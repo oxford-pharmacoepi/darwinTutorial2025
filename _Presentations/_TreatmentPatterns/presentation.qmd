@@ -157,7 +157,7 @@ CDMConnector::cohortCount(cdm$cohort_table)
 ## Viral Sinusitis Attrition
 
 ```{r}
-CDMConnector::attrition(cdm$cohort_table) %>%
+CDMConnector::attrition(cdm$cohort_table) |>
   # ID 7 == Viral Sinusitis
   dplyr::filter(.data$cohort_definition_id == 7)
 ```

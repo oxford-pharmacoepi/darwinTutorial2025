@@ -33,6 +33,16 @@ jobs:
           deps <- unique(renv::dependencies()$Package)
           message("Installing dependencies: ", paste(deps, collapse = ", "))
           pak::pak(deps, upgrade = FALSE)
+          
+      - name: Export path
+        run: |
+          echo "EUNOMIA_DATA_FOLDER=${GITHUB_WORKSPACE}/mock_datasets/" >> $GITHUB_ENV
+
+      - name: Download mock datasets
+        shell: Rscript {0}
+        run: |
+          dir.create(Sys.getenv("EUNOMIA_DATA_FOLDER"))
+          CDMConnector::requireEunomia(datasetName = "GiBleed")
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
