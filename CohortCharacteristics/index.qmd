@@ -104,27 +104,6 @@ flowchart LR
 
 ## Loadd needed packages
 
-```{r, echo=FALSE, eval=FALSE}
-# this is only for the renv
-library(visOmopResults)
-library(gt)
-library(reactable)
-library(ggplot2)
-library(plotly)
-library(officer)
-library(flextable)
-library(DiagrammeR)
-library(DiagrammeRsvg)
-library(grid)
-library(png)
-library(rsvg)
-library(lubridate)
-library(CirceR)
-library(SqlRender)
-library(rJava)
-library(officer)
-```
-
 ```{r}
 library(duckdb)
 library(CDMConnector)
