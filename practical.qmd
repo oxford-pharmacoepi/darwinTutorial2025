@@ -2,3 +2,13 @@
 
 1. Please use the provided code in `Practical.R` to create the cdm reference to the **GiBleed** database.
 
+- create codelist of interest
+
+- create cohort of interest
+
+- show attrition
+
+- table characteristics
+
+- compare large scale characetristics:
+

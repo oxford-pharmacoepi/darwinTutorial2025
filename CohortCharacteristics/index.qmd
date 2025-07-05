@@ -59,7 +59,7 @@ This package aims to standardise and provide the tools to conduct Characterisati
 
 -   [**summariseCharacteristics**](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseCharacteristics.html)
 
--   [summariseLargeScaleCharacteristics](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseLargeScaleCharacteristics.html)
+-   [**summariseLargeScaleCharacteristics**](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseLargeScaleCharacteristics.html)
 
 -   [summariseCohortOverlap](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseCohortOverlap.html)
 
@@ -136,6 +136,7 @@ library(PatientProfiles)
 library(gt)
 library(ggplot2)
 library(dplyr, warn.conflicts = FALSE)
+library(visOmopResults)
 ```
 
 ## Create `GiBleed` cdm_reference object
@@ -338,7 +339,7 @@ plotCohortAttrition(result)
 
 You need to identify the medications and/or conditions of interest as a *codelist* or *cohort* beforehand.
 
-## Let's instantiate some cohorts
+## Let's create some codelists
 
 ```{r}
 medications <- getDrugIngredientCodes(
@@ -454,6 +455,7 @@ Characterise the 'simvastatin' cohort with:
 
 ## Result
 
+::: scrollable-content
 ```{r, echo=FALSE}
 result <- cdm$simvastatin_cohort |>
   addAge(ageGroup = list(c(0, 49), c(50, Inf))) |>
@@ -478,6 +480,7 @@ result |>
     hide = c("table_name", "cdm_name")
   )
 ```
+:::
 
 ## Solution
 
@@ -511,6 +514,65 @@ result |>
 ```
 
 </details>
+
+## summariseLargeScaleCharacteristics
+
+Large scale characterisation is a data driven approach to characterise data and find which are the most frequently concepts in the desired windows of observation.
+
+. . .
+
+```{r}
+result <- cdm$acetaminophen |>
+  summariseLargeScaleCharacteristics(
+    strata = list(),
+    window = list(c(-365, -1), c(0, 0), c(1, 365)), 
+    eventInWindow = c("condition_occurrence", "observation"), 
+    episodeInWindow =  "drug_exposure", 
+    minimumFrequency = 0
+  )
+```
+
+## tableTopLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+result |>
+  filterSettings(table_name == "drug_exposure") |>
+  tableTopLargeScaleCharacteristics(topConcepts = 10)
+```
+:::
+
+## tableLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+tableLargeScaleCharacteristics(result = result)
+```
+:::
+
+## tableLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+tableLargeScaleCharacteristics(result = result, compareBy = "variable_level")
+```
+:::
+
+## tableLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+tableLargeScaleCharacteristics(result = result, compareBy = "variable_level", smdReference = "-365 to -1")
+```
+:::
 
 ## CohortCharacteristics
 
