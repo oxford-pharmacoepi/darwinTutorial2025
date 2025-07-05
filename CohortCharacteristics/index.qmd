@@ -27,7 +27,7 @@ editor: visual
 
 ## CohortCharacteristics
 
-![](https://github.com/darwin-eu-dev/CohortCharacteristics/blob/main/man/figures/logo.png?raw=true){fig-align="center"}
+![](../images/CohortCharacteristics.png){fig-align="center"}
 
 ## Context
 
@@ -39,17 +39,17 @@ options(width = 120)
 
 This package aims to standardise and provide the tools to conduct Characterisation studies as of the Darwin-EU Catalogue of Standard Analytics.
 
-![](https://www.benzifoundation.org/wp-content/uploads/2023/09/eu-darwin-1.png){fig-align="center"}
+![](../images/darwin.png){fig-align="center"}
 
 ## Package overview
 
--   [v0.3.0 on cran](https://CRAN.R-project.org/package=CohortCharacteristics)
+-   [v1.0.0 on cran](https://CRAN.R-project.org/package=CohortCharacteristics)
 
--   [package website](https://darwin-eu-dev.github.io/CohortCharacteristics/)
+-   [package website](https://darwin-eu.github.io/CohortCharacteristics/)
 
 . . .
 
-![](https://github.com/darwin-eu-dev/CohortCharacteristics/blob/main/man/figures/logo.png?raw=true){fig-align="center" width="5.5in"}
+![](../images/CohortCharacteristics.png){fig-align="center" width="5.5in"}
 
 ## Functions
 
@@ -59,7 +59,7 @@ This package aims to standardise and provide the tools to conduct Characterisati
 
 -   [**summariseCharacteristics**](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseCharacteristics.html)
 
--   [summariseLargeScaleCharacteristics](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseLargeScaleCharacteristics.html)
+-   [**summariseLargeScaleCharacteristics**](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseLargeScaleCharacteristics.html)
 
 -   [summariseCohortOverlap](https://darwin-eu-dev.github.io/PatientProfiles/reference/summariseCohortOverlap.html)
 
@@ -102,57 +102,63 @@ flowchart LR
   A --> C[Table function ]
 ```
 
-## Create the cdm reference
-
-```{r, echo=FALSE}
-library(visOmopResults)
-library(gt)
-library(reactable)
-library(ggplot2)
-library(plotly)
-library(officer)
-library(flextable)
-library(DiagrammeR)
-library(DiagrammeRsvg)
-library(grid)
-library(png)
-library(rsvg)
-library(lubridate)
-library(CirceR)
-library(SqlRender)
-library(rJava)
-```
+## Loadd needed packages
 
 ```{r}
 library(duckdb)
 library(CDMConnector)
 library(dplyr)
 library(here)
-
-datasetName <- "GiBleed"
-requireEunomia(datasetName = datasetName)
-db <- dbConnect(duckdb(), dbdir = eunomiaDir(datasetName = datasetName))
-cdm <- cdmFromCon(con = db, cdmSchema = "main", writeSchema = "main", cdmName = datasetName)
+library(CodelistGenerator)
+library(CohortConstructor)
+library(CohortCharacteristics)
+library(PatientProfiles)
+library(gt)
+library(ggplot2)
+library(dplyr, warn.conflicts = FALSE)
+library(visOmopResults)
+library(plotly)
 ```
 
-## summariseCohortAttrition
+## Create `GiBleed` cdm_reference object
 
-Let's use our prior drug cohorts:
+```{r, message=TRUE}
+datasetName <- "GiBleed"
+requireEunomia(datasetName = datasetName)
+con <- dbConnect(drv = duckdb(dbdir = eunomiaDir(datasetName = datasetName)))
+cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main", cdmName = datasetName)
+cdm
+```
+
+## Let' create a `acetaminophen` cohort
+
+Let's create a cohort that is all records of `acetaminophen` with the following inclusion criteria:
+
+- Collapse records separated by 30 days or less in the same episode.
+- No prior record of acetaminophen in the last 180 days.
+- At least 180 days of prior observation.
+- Index date between 1990 and 2019
+
+## Let' create a `acetaminophen` cohort
+
+. . .
 
 ```{r}
-library(CodelistGenerator)
-library(DrugUtilisation)
 codelist <- getDrugIngredientCodes(cdm = cdm, name = "acetaminophen", nameStyle = "{concept_name}")
-cdm <- generateDrugUtilisationCohortSet(
-  cdm = cdm,
-  name = "dus_cohort",
-  conceptSet = codelist,
-  gapEra = 30
-)
-cdm$dus_cohort <- cdm$dus_cohort |>
-  requirePriorDrugWashout(days = 180) |>
-  requireObservationBeforeDrug(days = 180) |>
-  requireDrugInDateRange(dateRange = as.Date(c("2000-01-01", "2022-12-31")))
+cdm$acetaminophen <- conceptCohort(
+  cdm = cdm, 
+  conceptSet = codelist, 
+  name = "acetaminophen",
+  exit = "event_end_date"
+) |>
+  collapseCohorts(gap = 30) |>
+  requireCohortIntersect(
+    targetCohortTable = "acetaminophen", 
+    window = c(-180, -1), 
+    intersections = 0
+  ) |>
+  requirePriorObservation(minPriorObservation = 180) |>
+  requireInDateRange(dateRange = as.Date(c("1990-01-01", "2019-12-31")))
 ```
 
 ## summariseCohortAttrition
@@ -164,13 +170,11 @@ cdm$dus_cohort <- cdm$dus_cohort |>
 . . .
 
 ```{r}
-library(CohortCharacteristics)
-result <- summariseCohortAttrition(cdm$dus_cohort)
-result |>
-  glimpse()
+result <- summariseCohortAttrition(cohort = cdm$acetaminophen)
+glimpse(x = result)
 ```
 
-. . .
+## summariseCohortAttrition
 
 ```{r}
 settings(result) |>
@@ -197,7 +201,7 @@ settings(result) |>
 
 ::: scrollable-content
 ```{r}
-tableCohortAttrition(result)
+tableCohortAttrition(result = result)
 ```
 :::
 
@@ -206,14 +210,14 @@ tableCohortAttrition(result)
 [gt](https://gt.rstudio.com/) tables can easily be exported:
 
 ```{r, eval=FALSE}
-tab <- tableCohortAttrition(result)
-gt::gtsave(tab, "myTable.docx/html/pdf/png")
+tab <- tableCohortAttrition(result = result)
+gtsave(data = tab, filename = here("attrition.docx")) # pdf/html/png also allowed
 ```
 
 ## flextable is also supported
 
 ```{r}
-tableCohortAttrition(result, type = "flextable")
+tableCohortAttrition(result = result, type = "flextable")
 ```
 
 ## plotCohortAttrition
@@ -221,27 +225,24 @@ tableCohortAttrition(result, type = "flextable")
 . . .
 
 ```{r, eval=FALSE}
-plotCohortAttrition(result)
+plotCohortAttrition(result = result)
 ```
 
 . . .
 
 ```{r, echo=FALSE, results='asis'}
-plotCohortAttrition(result)
-```
-
-## Export the attrition plot
-
-The output is a [DiagrammeR](https://rich-iannone.github.io/DiagrammeR/) object:
-
-```{r, eval=FALSE}
-plt <- plotCohortAttrition(result)
-# DiagrammeRsvg::export_svg(plt)
+plotCohortAttrition(result = result)
 ```
 
 ## Your turn
 
-Can you visualise the attrition of the simvastatin cohort that we created before?
+Can you visualise the attrition of a `simvastatin` cohort?
+
+- Any record of `simvastatin`
+- Collapse records separated by 90 days or less in the same episode.
+- First record ever.
+- At least 365 days of prior observation.
+- Index date between 1990 and 2019
 
 . . .
 
@@ -250,26 +251,64 @@ Can you suppress counts under 10?
 ## Result
 
 ```{r, echo=FALSE, results='asis'}
+# create codelist
 codelist <- getDrugIngredientCodes(cdm = cdm, name = "simvastatin")
-cdm <- generateDrugUtilisationCohortSet(
-  cdm = cdm,
-  name = "simvastatin_cohort",
-  conceptSet = codelist,
-  gapEra = 90
-)
-cdm$simvastatin_cohort <- cdm$simvastatin_cohort |>
-  requireIsFirstDrugEntry() |>
-  requireObservationBeforeDrug(days = 365) |>
-  requireDrugInDateRange(dateRange = as.Date(c('2010-01-01', '2021-12-31')))
 
+# create cohort
+cdm$simvastatin_cohort <- conceptCohort(
+  cdm = cdm,
+  conceptSet = codelist, 
+  name = "simvastatin_cohort", 
+  exit = "event_end_date"
+) |>
+  collapseCohorts(gap = 90) |>
+  requireIsFirstEntry() |>
+  requirePriorObservation(minPriorObservation = 365) |>
+  requireInDateRange(dateRange = as.Date(c("1990-01-01", "2019-12-31")))
+
+# summarise attrition
 result <- cdm$simvastatin_cohort |>
   summariseCohortAttrition() |>
   suppress(minCellCount = 10)
 
+# plot attrition
 plotCohortAttrition(result)
 ```
 
-## SummariseCharacteristics
+## Solution
+
+<details>
+
+<summary>💡 Click to see solution</summary>
+
+```{r, eval=FALSE}
+# create codelist
+codelist <- getDrugIngredientCodes(cdm = cdm, name = "simvastatin")
+
+# create cohort
+cdm$simvastatin_cohort <- conceptCohort(
+  cdm = cdm,
+  conceptSet = codelist, 
+  name = "simvastatin_cohort", 
+  exit = "event_end_date"
+) |>
+  collapseCohorts(gap = 90) |>
+  requireIsFirstEntry() |>
+  requirePriorObservation(minPriorObservation = 365) |>
+  requireInDateRange(dateRange = as.Date(c("1990-01-01", "2019-12-31")))
+
+# summarise attrition
+result <- cdm$simvastatin_cohort |>
+  summariseCohortAttrition() |>
+  suppress(minCellCount = 10)
+
+# plot attrition
+plotCohortAttrition(result)
+```
+
+</details>
+
+## summariseCharacteristics
 
 [**summariseCharacteristics()**](https://darwin-eu-dev.github.io/CohortCharacteristics/reference/summariseCharacteristics.html) summarises the demographics of the cohort by default, but you can use the intersect arguments to evaluate:
 
@@ -279,42 +318,30 @@ plotCohortAttrition(result)
 
 . . .
 
-You need to instantiate the medications and/or conditions of interest in a cohort table.
+You need to identify the medications and/or conditions of interest as a *codelist* or *cohort* beforehand.
 
-## Let's instantiate some cohorts
+## Let's create some codelists
 
 ```{r}
-library(CodelistGenerator)
-codelist <- getDrugIngredientCodes(
+medications <- getDrugIngredientCodes(
   cdm = cdm, 
   name = c("warfarin", "morphine", "verapamil", "atorvastatin", "nitroglycerin"), 
   nameStyle = "{concept_name}"
 )
-cdm <- generateDrugUtilisationCohortSet(
-  cdm = cdm,
-  name = "medications",
-  conceptSet = codelist
-)
-cdm <- generateConceptCohortSet(
-  cdm = cdm, 
-  conceptSet =list(
-    "fever" = c(437663),
-    "cough" = c(254761),
-    "cardiac_arrest" = c(321042),
-    "myocardial_infarction" = c(4329847),
-    "headache" = c(378253)
-  ),
-  name = "conditions",
-  end = 0,
-  limit = "all"
+conditions <- list(
+  "fever" = getCandidateCodes(cdm = cdm, keywords = "fever")$concept_id,
+  "cough" = getCandidateCodes(cdm = cdm, keywords = "cough")$concept_id,
+  "cardiac_arrest" = getCandidateCodes(cdm = cdm, keywords = "cardiac arrest")$concept_id,
+  "myocardial_infarction" = getCandidateCodes(cdm = cdm, keywords = "myocardial infarction")$concept_id,
+  "headache" = getCandidateCodes(cdm = cdm, keywords = "headache")$concept_id
 )
 ```
 
 ## summariseCharacteristics
 
 ```{r}
-result <- cdm$dus_cohort |>
-  PatientProfiles::addSex() |>
+result <- cdm$acetaminophen |>
+  addSex() |>
   summariseCharacteristics(
     strata = list("sex"),
     demographics = TRUE,
@@ -322,9 +349,9 @@ result <- cdm$dus_cohort |>
     tableIntersectCount = list(
       "Number visits prior year" = list(tableName = "visit_occurrence", window = c(-365, -1))
     ),
-    cohortIntersectFlag = list(
-      "Conditions any time prior" = list(targetCohortTable = "conditions", window = c(-Inf, -1)),
-      "Medications prior year" = list(targetCohortTable = "medications", window = c(-365, -1))
+    conceptIntersectFlag = list(
+      "Conditions any time prior" = list(conceptSet = conditions, window = c(-Inf, -1)),
+      "Medications prior year" = list(conceptSet = medications, window = c(-365, -1))
     )
   )
 result |>
@@ -334,12 +361,12 @@ result |>
 ## tableCharacteristics
 
 ```{r, eval=FALSE}
-tableCharacteristics(result)
+tableCharacteristics(result = result)
 ```
 
 ::: scrollable-content
 ```{r, echo=FALSE}
-tableCharacteristics(result)
+tableCharacteristics(result = result)
 ```
 :::
 
@@ -347,20 +374,18 @@ tableCharacteristics(result)
 
 ```{r, eval=FALSE}
 tableCharacteristics(
-  result,
+  result = result,
   header = c("cdm_name", "sex"),
-  groupColumn = c("cohort_name"),
-  hide = c("table", "window", "value")
+  groupColumn = c("cohort_name")
 )
 ```
 
 ::: scrollable-content
 ```{r, echo=FALSE}
 tableCharacteristics(
-  result,
+  result = result,
   header = c("cdm_name", "sex"),
-  groupColumn = c("cohort_name"),
-  hide = c("table", "window", "value")
+  groupColumn = c("cohort_name")
 )
 ```
 :::
@@ -369,22 +394,20 @@ tableCharacteristics(
 
 ```{r, eval=FALSE}
 result |>
-  dplyr::filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
+  filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
   tableCharacteristics(
     header = c("cdm_name", "sex"),
-    groupColumn = c("cohort_name"),
-    hide = c("table", "window", "value")
+    groupColumn = c("cohort_name")
   )
 ```
 
 ::: scrollable-content
 ```{r, echo=FALSE}
 result |>
-  dplyr::filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
+  filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
   tableCharacteristics(
-    header = c("cdm_name", "sex"),
-    groupColumn = c("cohort_name"),
-    hide = c("table", "window", "value")
+    header = c("sex"),
+    groupColumn = c("cohort_name")
   )
 ```
 :::
@@ -413,9 +436,10 @@ Characterise the 'simvastatin' cohort with:
 
 ## Result
 
+::: scrollable-content
 ```{r, echo=FALSE}
 result <- cdm$simvastatin_cohort |>
-  PatientProfiles::addAge(ageGroup = list(c(0, 49), c(50, Inf))) |>
+  addAge(ageGroup = list(c(0, 49), c(50, Inf))) |>
   summariseCharacteristics(
     strata = list("age_group"),
     demographics = TRUE,
@@ -423,22 +447,27 @@ result <- cdm$simvastatin_cohort |>
     tableIntersectCount = list(
       "Number conditions on index" = list(tableName = "condition_occurrence", window = c(0, 0))
     ),
-    cohortIntersectFlag = list(
-      "Conditions any time prior" = list(targetCohortTable = "conditions", window = c(-Inf, 0)),
-      "Medications prior year" = list(targetCohortTable = "medications", window = c(-365, 0))
+    conceptIntersectFlag = list(
+      "Conditions any time prior" = list(conceptSet = conditions, window = c(-Inf, 0)),
+      "Medications prior year" = list(conceptSet = medications, window = c(-365, 0))
     )
   )
 result |>
   suppress(minCellCount = 10) |>
-  dplyr::filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
+  filter(!estimate_name %in% c("min", "max", "mean", "sd")) |>
   tableCharacteristics(
     header = "age_group", 
     groupColumn = "cohort_name",
-    hide = c("table", "window", "value", "cdm_name")
+    hide = c("table_name", "cdm_name")
   )
 ```
+:::
 
 ## Solution
+
+<details>
+
+<summary>💡 Click to see solution</summary>
 
 ```{r, eval=FALSE}
 result <- cdm$simvastatin_cohort |>
@@ -465,6 +494,106 @@ result |>
   )
 ```
 
+</details>
+
+## summariseLargeScaleCharacteristics
+
+Large scale characterisation is a data driven approach to characterise data and find which are the most frequently concepts in the desired windows of observation.
+
+. . .
+
+```{r}
+result <- cdm$acetaminophen |>
+  summariseLargeScaleCharacteristics(
+    strata = list(),
+    window = list(c(-365, -1), c(0, 0), c(1, 365)), 
+    eventInWindow = c("condition_occurrence", "observation"), 
+    episodeInWindow =  "drug_exposure", 
+    minimumFrequency = 0
+  )
+```
+
+## tableTopLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+result |>
+  filterSettings(table_name == "drug_exposure") |>
+  tableTopLargeScaleCharacteristics(topConcepts = 10)
+```
+:::
+
+## tableLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+tableLargeScaleCharacteristics(result = result)
+```
+:::
+
+## tableLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+tableLargeScaleCharacteristics(result = result, compareBy = "variable_level")
+```
+:::
+
+## tableLargeScaleCharacteristics
+
+. . .
+
+::: scrollable-content
+```{r}
+tableLargeScaleCharacteristics(result = result, compareBy = "variable_level", smdReference = "-365 to -1")
+```
+:::
+
+## plotLargeScaleCharacteristics
+
+```{r}
+plotLargeScaleCharacteristics(result = result)
+```
+
+## plotComparedLargeScaleCharacteristics
+
+```{r}
+plotComparedLargeScaleCharacteristics(
+  result = result, 
+  colour = "variable_level", 
+  facet = "table_name"
+)
+```
+
+## plotComparedLargeScaleCharacteristics
+
+```{r}
+plotComparedLargeScaleCharacteristics(
+  result = result, 
+  colour = "variable_level", 
+  facet = "table_name"
+) |>
+  ggplotly()
+```
+
 ## CohortCharacteristics
 
-[![](https://github.com/darwin-eu-dev/CohortCharacteristics/blob/main/man/figures/logo.png?raw=true){fig-align="center" width="5.5in"}](https://darwin-eu-dev.github.io/CohortCharacteristics/)
+::: {style="display: flex; align-items: center; justify-content: space-between;"}
+::: {style="flex: 1;"}
+👉 [**Packages website**](https://darwin-eu.github.io/CohortCharacteristics)\
+👉 [**CRAN link**](https://cran.r-project.org/web/packages/CohortCharacteristics)\
+👉 [**Manual**](https://cran.r-project.org/web/packages/CohortCharacteristics/CohortCharacteristics.pdf)
+
+📧 <a href="mailto:marti.catalasabate@ndorms.ox.ac.uk">marti.catalasabate\@ndorms.ox.ac.uk</a>
+:::
+
+::: {style="flex: 1; text-align: center;"}
+<img src="https://github.com/darwin-eu/CohortCharacteristics/blob/main/man/figures/logo.png?raw=true" width="600"/>
+:::
+:::
