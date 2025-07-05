@@ -9,7 +9,7 @@ This website will be used during the workshop conducted at [OHDSI EUROPE 2025](h
 |__13.50 to 14.30__ | Ed | CDMConnector and CodelistGenerator | [Quarto](CodelistGenerator/index.qmd) |  
 |__14.30 to 15.00__ | Marti | Characterising cohorts with CohortCharacteristics | [Quarto](CohortCharacteristics/index.qmd) |  
 |__15.00 to 15.30__ |  | _Break_  | |  
-|__15.30 to 16.15__ | Marti | Characterise your own cohort  | [Quarto](Practical.qmd) |  
+|__15.30 to 16.15__ | Marti | Characterise your own cohort  | [Quarto](practical.qmd) |  
 |__16.15 to 17.00__ | Maarten | TreatmentPatterns  | [Quarto](TreatmentPatterns/index.qmd) |
 
 <div style="text-align: center;">
