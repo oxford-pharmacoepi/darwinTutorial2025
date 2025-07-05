@@ -1,0 +1,4 @@
+# Characterise your own cohort
+
+1. Please use the provided code in `Practical.R` to create the cdm reference to the **GiBleed** database.
+

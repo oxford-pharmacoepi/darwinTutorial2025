@@ -2,11 +2,15 @@
 
 This website will be used during the workshop conducted at [OHDSI EUROPE 2025](https://www.ohdsi-europe.org/symposium-event) conference.
 
-See details:
-
--   [**Program**](program.qmd), schedule of the practical sessions.
--   [**Presentations**](Presentations/index.qmd), different presentations during the session.
--   [**Practical**](practical.qmd), hands on practical instructions.
+| Time                | Speaker | Topic                                                                 | Links |  
+|---------------------|---------|-----------------------------------------------------------------------| --- |  
+|__13.30 to 13.40__ | Dani | Intro to DARWIN EU and standardised analytics | [PowerPoint]() |
+|__13.40 to 13.50__ | Ed | Getting started | [Set up](setup.qmd) |
+|__13.50 to 14.30__ | Ed | CDMConnector and CodelistGenerator | [Quarto](CodelistGenerator/index.qmd) |  
+|__14.30 to 15.00__ | Marti | Characterising cohorts with CohortCharacteristics | [Quarto](CohortCharacteristics/index.qmd) |  
+|__15.00 to 15.30__ |  | _Break_  | |  
+|__15.30 to 16.15__ | Marti | Characterise your own cohort  | [Quarto](Practical.qmd) |  
+|__16.15 to 17.00__ | Maarten | TreatmentPatterns  | [Quarto](TreatmentPatterns/index.qmd) |
 
 <div style="text-align: center;">
   <img src="images/darwin.png" width="200" />

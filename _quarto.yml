@@ -13,14 +13,16 @@ website:
     center: "Rendered on {{< meta date >}}"
   navbar:
     left:
-      - text: Program
-        href: program.qmd
       - text: Set up
         href: setup.qmd
-      - text: Presentations
-        href: Presentations/index.qmd
+      - text: CodelistGenerator
+        href: CodelistGenerator/index.qmd
+      - text: CohortCharacteristics
+        href: CohortCharacteristics/index.qmd
       - text: Practical
         href: practical.qmd
+      - text: TreatmentPatterns
+        href: TreatmentPatterns/index.qmd
 
 format:
   html:
