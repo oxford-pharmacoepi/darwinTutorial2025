@@ -12,7 +12,7 @@ format:
     code-line-numbers: false
     height: 900
     width: 1600
-    footer: "Conducting 'Off-The-Shelf' Characterization Studies Using DARWIN EU Tools and the OMOP CDM"
+    footer: "Conducting 'Off-The-Shelf' Characterisation Studies Using DARWIN EU Tools and the OMOP CDM"
 execute:
   echo: true
   eval: true
