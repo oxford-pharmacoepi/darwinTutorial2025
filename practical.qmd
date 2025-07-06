@@ -1,14 +1,26 @@
 # Characterise your own cohort
 
-1. Please use the provided code in `Practical.R` to create the cdm reference to the **GiBleed** database.
+Please use the provided code in `Practical.R` to create the cdm reference to the **GiBleed** database and follow the steps:
 
-- create codelist of interest
+1. Create codelists of interest:
+- drugs codelists: *acetaminophen*, **, **, ...
+- conditions codelists: *headache*, **
 
-- create cohort of interest
+2. Create cohort of interest:
+- All records of **.
+- Collapse them with a gap of 30 days.
+- First record ever.
+- Prior observation of 365 days.
 
-- show attrition
+3. Display attrition in a diagram, are you able to save it in a quarto/word document?
 
-- table characteristics
+4. Characteristic the cohort of interest, please include in the characterisation the following:
+- Demographics
+- Number of visits in the prior year ([-365, -1])
+- Number of drugs prescribed in the month prior ([-30, -1])
+- % of conditions of interest any time prior ([-Inf, -1])
+- % of medication of interest in the prior year ([-365, -1])
+Are you able to save the table in a quarto/word document?
 
-- compare large scale characetristics:
-
+5. Run large scale characterisation for you cohort of interest using the following tables: `condition_occurrence` and `drug_exposure`, and windows: [-365, -1], [-30, -1], [1, 30], [1, 365]. Compare the results of the two analogous windows which are the concepts that have bigger SMDs.
+Are you able to save the plot comparing LSC in a quarto/word document?
