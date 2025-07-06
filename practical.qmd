@@ -3,14 +3,14 @@
 Please use the provided code in `Practical.R` to create the cdm reference to the **GiBleed** database and follow the steps:
 
 1. Create codelists of interest:
-- drugs codelists: *acetaminophen*, **, **, ...
-- conditions codelists: *headache*, **
+- drugs codelists: *aspirin*, *amoxicillin*, *acetaminophen*, *ibuprofen*, ... (Add more if you want)
+- conditions codelists: *headache*, *sinusitis*, *pharyngitis*, *bronchitis*, *Osteoarthritis*, ... (Add more if you want)
 
 2. Create cohort of interest:
-- All records of **.
+- All records of *aspirin*.
 - Collapse them with a gap of 30 days.
 - First record ever.
-- Prior observation of 365 days.
+- Prior observation of at least 365 days.
 
 3. Display attrition in a diagram, are you able to save it in a quarto/word document?
 
