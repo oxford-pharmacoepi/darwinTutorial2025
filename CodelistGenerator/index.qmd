@@ -421,22 +421,6 @@ cdm$concept |>
   pull(concept_name)
 ```
 
-## Drug ingredients
-
-```{r}
-getDrugIngredientCodes(cdm = cdm, 
-                       name = c("acetaminophen", "Oxycodone"),
-                       nameStyle = "{concept_name}") |> 
-  unionCodelists()
-```
-
-```{r}
-getDrugIngredientCodes(cdm = cdm, 
-                       name = c("acetaminophen", "Oxycodone"),
-                       nameStyle = "{concept_name}") |> 
-  intersectCodelists()
-```
-
 ## Your turn
 
 Using Eunomia data:
@@ -588,7 +572,7 @@ cohortCodelist(cdm$study_cohort, 1)
 
 Using Eunomia data:
 
-1.  Create a cohort of people taking clavunate
+1.  Create a cohort of people taking aspirin
 
 
 ## Solution
