@@ -241,7 +241,7 @@ cdm$observation_period |>
   summarise(min_obs_period_start = min(observation_period_start_date, na.rm = TRUE)) 
 
 cdm$observation_period |> 
-  summarise(max_obs_period_start = max(observation_period_start_date, na.rm = TRUE))
+  summarise(max_obs_period_start = max(observation_period_end_date, na.rm = TRUE))
 ```
 
 </details>

@@ -23,6 +23,9 @@ website:
         href: practical.qmd
       - text: TreatmentPatterns
         href: TreatmentPatterns/index.qmd
+    right: 
+      - icon: github
+        href: https://github.com/oxford-pharmacoepi/darwinTutorial2025
 
 format:
   html:
