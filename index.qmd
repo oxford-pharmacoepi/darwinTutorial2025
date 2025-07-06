@@ -4,7 +4,7 @@ This website will be used during the workshop conducted at [OHDSI EUROPE 2025](h
 
 | Time                | Speaker | Topic                                                                 | Links |  
 |---------------------|---------|-----------------------------------------------------------------------| --- |  
-|__13.30 to 13.40__ | Dani | Intro to DARWIN EU and standardised analytics | [PowerPoint]() |
+|__13.30 to 13.40__ | Dani | Intro to DARWIN EU and standardised analytics | [PowerPoint](https://github.com/oxford-pharmacoepi/darwinTutorial2025/raw/main/IntroToStdAnalinDARWINEU_OHDSIEU25.pptx) |
 |__13.40 to 13.50__ | Ed | Getting started | [Set up](setup.qmd) |
 |__13.50 to 14.30__ | Ed | CDMConnector and CodelistGenerator | [Quarto](CodelistGenerator/index.qmd) |  
 |__14.30 to 15.00__ | Marti | Characterising cohorts with CohortCharacteristics | [Quarto](CohortCharacteristics/index.qmd) |  
