@@ -48,15 +48,19 @@ library(duckdb)
 library(omopgenerics)
 library(CDMConnector)
 library(here)
+library(CodelistGenerator)
+library(CohortConstructor)
 ```
 
 . . .
 
 ```{r, message = TRUE}
-datasetName <- "GiBleed"
-requireEunomia(datasetName = datasetName)
-con <- dbConnect(duckdb(), dbdir = eunomiaDir(datasetName = datasetName))
-cdm <- cdmFromCon(con = con, cdmSchema = "main", writeSchema = "main", cdmName = datasetName)
+con <- dbConnect(duckdb(), 
+                 dbdir = eunomiaDir())
+cdm <- cdmFromCon(con = con, 
+                  cdmSchema = "main", 
+                  writeSchema = "main", 
+                  cdmName = "Eunomia")
 cdm
 ```
 
@@ -296,7 +300,6 @@ cdm$concept_synonym |> glimpse()
 Search results will be specific to the version of the vocabulary being used
 
 ```{r}
-library(CodelistGenerator)
 getVocabVersion(cdm = cdm)
 ```
 
@@ -518,8 +521,8 @@ nrow(sinusitis_codes_2)
 # Codelists to cohorts 
 
 ## Codelists to cohorts 
+
 ```{r}
-library(CohortConstructor)
 medication_codes <- getDrugIngredientCodes(cdm = cdm, 
                                       name = c("warfarin", "morphine", 
                                                "verapamil", "atorvastatin",
@@ -527,52 +530,75 @@ medication_codes <- getDrugIngredientCodes(cdm = cdm,
                                                "acetaminophen"),
                                       nameStyle = "{concept_name}")
 
+cdm$meds <- conceptCohort(cdm = cdm, 
+                          conceptSet = medication_codes,
+                          exit = "event_end_date",
+                          name = "meds") |> 
+  collapseCohorts(gap = 30) 
+
+cdm$meds 
+```
+
+
+## Codelists to cohorts
+```{r}
 sinusitis_codes <- getCandidateCodes(
   cdm = cdm,
   keywords = "sinusitis",
   domains = "Condition"
 )
 
-study_codelists <- bind(medication_codes,
-     list(sinusitis = sinusitis_codes$concept_id))
+cdm$sinusitis <- conceptCohort(cdm = cdm, 
+                          conceptSet = list(sinusitis = sinusitis_codes$concept_id),
+                          exit = "event_end_date",
+                          name = "sinusitis") |> 
+  requireIsFirstEntry()
 
-cdm$study_cohort <- conceptCohort(cdm = cdm, 
-                                       conceptSet = study_codelists,
-                                       exit = "event_end_date",
-                                       name = "study_cohort")
-
-cdm$study_cohort |> 
-  glimpse()
+cdm$sinusitis
 ```
 
 ## `<cohort_table>` object
 ```{r}
-settings(cdm$study_cohort)
+settings(cdm$meds)
 ```
 
-<br/>
+```{r}
+settings(cdm$sinusitis)
+```
 
-. . .
+## `<cohort_table>` object
 
 ```{r}
-cohortCount(cdm$study_cohort)
+cohortCount(cdm$meds)
+```
+
+```{r}
+cohortCount(cdm$sinusitis)
 ```
 
 ## `<cohort_table>` object
 ```{r}
-attrition(cdm$study_cohort)
+attrition(cdm$meds)
+```
+
+```{r}
+attrition(cdm$sinusitis)
 ```
 
 ## `<cohort_table>` object
 ```{r}
-cohortCodelist(cdm$study_cohort, 1)
+cohortCodelist(cdm$meds, 1)
+```
+
+```{r}
+cohortCodelist(cdm$sinusitis, 1)
 ```
 
 ## Your turn
 
 Using Eunomia data:
 
-1.  Create a cohort of people taking aspirin
+1.  Create a cohort of people taking aspirin, collapse records less than 30 days, and require is first ever exposure
 
 
 ## Solution
@@ -584,7 +610,9 @@ Using Eunomia data:
 ```{r}
 aspirin_codes <- getDrugIngredientCodes(cdm = cdm, name = "aspirin")
 cdm$aspirin_cohort <- conceptCohort(cdm = cdm, conceptSet = aspirin_codes, 
-                                    name = "aspirin_cohort")
+                                    name = "aspirin_cohort") |> 
+  collapseCohorts(gap = 30) |> 
+  requireIsFirstEntry()
 
 cdm$aspirin_cohort |> 
   glimpse()
