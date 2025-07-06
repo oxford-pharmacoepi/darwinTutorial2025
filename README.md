@@ -6,7 +6,7 @@ In this repo you can find the source code for the presentation and exercises for
 
 There are two ways to run the code and follow the presentations and the practical:
 
--   **Posit cloud**, we have created a space for you with all the packages installed and the synthetic data downloaded. Note you will need to create a free account. Follow this [link]() to access it.
+-   **Posit cloud**, we have created a space for you with all the packages installed and the synthetic data downloaded. Note you will need to create a free account. Follow this [link](https://posit.cloud/spaces/668339/join?access_code=h6LQAibpzBKSFHk6h73YA6WjJyqrn86_fAHsKbOo) to access it.
 
 -   **Run code locally** follow instructions to [set up](https://oxford-pharmacoepi.github.io/darwinTutorial2025/setup.html) your environment.
 

@@ -2,7 +2,7 @@
 
 There are two ways to run the code and follow the presentations and the practical:
 
--   **Posit cloud**, we have created a space for you with all the packages installed and the synthetic data downloaded. Note you will need to create a free account. Follow this [link]() to access it.
+-   **Posit cloud**, we have created a space for you with all the packages installed and the synthetic data downloaded. Note you will need to create a free account. Follow this [link](https://posit.cloud/spaces/668339/join?access_code=h6LQAibpzBKSFHk6h73YA6WjJyqrn86_fAHsKbOo) to access it.
 
 -   **Run code locally** follow the above instructions to set up your environment.
 
